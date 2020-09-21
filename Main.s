@@ -1,11 +1,14 @@
 section .data
     Compiling db "Tests/Variable.IC", 0
+    Character db "Hello"
 
 section .bss
     FileData resb 10240
 
 section .text
     global _start
+
+%include "IO.s"
 
 Terminate: ; Terminates the program
     MOV RAX, 231
@@ -35,8 +38,10 @@ ReadFile:
     MOV RAX, 1
     MOV RDI, 1
     MOV RSI, FileData
-    MOV RDX, 10240
-    SYSCALL
+    MOV RDX, 1024
+
+    MOV RSI, Character
+    CALL PutChar
 
     RET
 
