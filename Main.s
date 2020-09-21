@@ -40,8 +40,8 @@ ReadFile:
     MOV RSI, FileData
     MOV RDX, 1024
 
-    MOV RSI, Character
-    CALL PutChar
+    MOV RAX, FileData
+    CALL PutString
 
     RET
 
