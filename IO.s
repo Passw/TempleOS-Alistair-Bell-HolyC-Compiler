@@ -1,12 +1,14 @@
 PutChar: ; Puts upto 8 bytes of character data
+    PUSH RAX
     MOV RAX, 1
     MOV RDI, 1
     MOV RDX, 8
+    POP RSI
     SYSCALL
     RET
 
 PutString:
-    PUSH RAX
+    PUSH RAX ; String data
     MOV RBX, 0 ; string length
 
 StringLoop:

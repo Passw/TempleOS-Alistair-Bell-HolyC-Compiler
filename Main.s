@@ -1,9 +1,11 @@
 section .data
     Compiling db "Tests/Variable.IC", 0
-    Character db "Hello"
+    Character db "Hello", 10, 0
+    SingleCharacter db "H", 0
 
 section .bss
     FileData resb 10240
+    ArgumentCount resb 8
 
 section .text
     global _start
@@ -44,7 +46,23 @@ ReadFile:
     CALL PutString
 
     RET
-
+ 
 _start:
+    ; Testing command line arguments
+    POP RAX
+    
+    ; By default the kernel puts the path onto the argument stack
+    CMP RAX, 1
+    JE EndSequence
+
+    ; Arguments found, run rest of code
+
+    MOV RAX, Character
+    CALL PutChar
+
     CALL ReadFile
+
+EndSequence:
+
     CALL Terminate ; call end
+    
