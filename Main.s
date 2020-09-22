@@ -37,11 +37,6 @@ ReadFile:
     POP RDI
     SYSCALL
 
-    MOV RAX, 1
-    MOV RDI, 1
-    MOV RSI, FileData
-    MOV RDX, 1024
-
     MOV RAX, FileData
     CALL PutString
 
@@ -56,9 +51,6 @@ _start:
     JE EndSequence
 
     ; Arguments found, run rest of code
-
-    MOV RAX, Character
-    CALL PutChar
 
     CALL ReadFile
 

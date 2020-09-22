@@ -1,7 +1,7 @@
 COMPILER 	:= nasm
 LINKER		:= ld
 FLAGS 		:= -f elf64 -F dwarf -g
-OBJECTS		:= *.o
+OBJECTS		:= IO.o Main.o
 TARGET		:= Compiler
 
 all: $(TARGET)
