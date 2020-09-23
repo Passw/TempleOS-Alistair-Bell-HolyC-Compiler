@@ -1,11 +1,9 @@
 section .data
-    InfoMessage1 db "Compiling program ", 0
-
+    
 section .bss
     Compiling resb 128
     FileData resb 10240
     ArgumentCount resb 8
-
 
 section .text
     global _start
@@ -25,7 +23,8 @@ ReadFile:
     MOV RDX, 0644o
     SYSCALL ; open buffer
 
-    CMP RAX, -2
+    CMP RAX, -2 ; -2 is for a invalid input
+    JE EndSequence
 
     ; Probally should handle errors but oh well
     PUSH RAX
@@ -41,8 +40,9 @@ ReadFile:
 
     MOV RAX, FileData
     CALL PutString
+
     RET
- 
+    
 _start:
     ; Testing command line arguments
     POP RAX
@@ -56,12 +56,8 @@ GetFileArguments:
  
     POP RAX ; Pop of the file path
 
-    MOV RAX, InfoMessage1
-    CALL PutString
-
     POP RAX ; First argument
     MOV [Compiling], RAX
-    CALL PutString
 
     ; Arguments found, run rest of code
     CALL ReadFile
