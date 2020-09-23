@@ -1,11 +1,11 @@
 section .data
-    Compiling db "Tests/Variable.IC", 0
-    Character db "Hello", 10, 0
-    SingleCharacter db "H", 0
+    InfoMessage1 db "Compiling program ", 0
 
 section .bss
+    Compiling resb 128
     FileData resb 10240
     ArgumentCount resb 8
+
 
 section .text
     global _start
@@ -20,10 +20,12 @@ Terminate: ; Terminates the program
 
 ReadFile:
     MOV RAX, 2
-    MOV RDI, Compiling
+    MOV RDI, [Compiling]
     MOV RSI, 0
     MOV RDX, 0644o
     SYSCALL ; open buffer
+
+    CMP RAX, -2
 
     ; Probally should handle errors but oh well
     PUSH RAX
@@ -39,7 +41,6 @@ ReadFile:
 
     MOV RAX, FileData
     CALL PutString
-
     RET
  
 _start:
@@ -50,11 +51,20 @@ _start:
     CMP RAX, 1
     JE EndSequence
 
-    ; Arguments found, run rest of code
+GetFileArguments:
+    MOV [ArgumentCount], RAX
+ 
+    POP RAX ; Pop of the file path
 
+    MOV RAX, InfoMessage1
+    CALL PutString
+
+    POP RAX ; First argument
+    MOV [Compiling], RAX
+    CALL PutString
+
+    ; Arguments found, run rest of code
     CALL ReadFile
 
 EndSequence:
-
     CALL Terminate ; call end
-    
