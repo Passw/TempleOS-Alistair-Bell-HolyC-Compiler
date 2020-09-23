@@ -26,5 +26,4 @@ StringLoop:
     POP RSI
     MOV RDX, RBX
     SYSCALL
-
     RET

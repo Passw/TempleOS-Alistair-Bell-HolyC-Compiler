@@ -1,7 +1,8 @@
 COMPILER 	:= nasm
 LINKER		:= ld
 FLAGS 		:= -f elf64 -F dwarf -g
-OBJECTS		:= IO.o Main.o
+OUTPUT		:= Build
+OBJECTS		:= $(OUTPUT)/IO.o $(OUTPUT)/Main.o $(OUTPUT)/Grammer.o $(OUTPUT)/Parser.o
 TARGET		:= Compiler
 
 all: $(TARGET)
@@ -9,9 +10,9 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(LINKER) $(OBJECTS) -o $(TARGET)
 
-%.o : %.s
+$(OUTPUT)/%.o : %.s
 	$(COMPILER) $(FLAGS) -o $@ $<
 
 clean:
-	rm *.o
+	rm $(OUTPUT)/*.o
 	rm $(TARGET)
