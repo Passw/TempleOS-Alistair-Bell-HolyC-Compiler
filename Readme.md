@@ -1,4 +1,16 @@
-# My Small Compiler
+# Improved C compiler
 
-A work in progress compiler which I am making to learn more about assembly and eventually fix some of the issues I have had with C
-This project is just for fun when I get burnt out on other projects
+This is a compiler project to learn some assembly and maybe make something I am proud of
+The language being made is a modification of the C compiler in which I fix some issues I have with the language, small changes (quality of life)
+
+
+```
+
+i8 demo()
+{
+    return 1; 
+}
+
+demo; /* Program to run */
+
+```
