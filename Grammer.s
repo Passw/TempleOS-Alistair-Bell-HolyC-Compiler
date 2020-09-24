@@ -32,6 +32,17 @@ section .data
     GRAMMER_64_FLOAT DB "f64" ; double in C
     
     GRAMMER_VOID DB "void"
+
+    ;;;;;;;;;;;
+    ;
+    ;   OPERATIONS
+    ;
+    ;;;;;;;;;;
+    
+    GRAMMER_OPERATOR_ADD DB "+"
+    GRAMMER_OPERATOR_SUBTRACT DB "-"
+    GRAMMER_OPERATOR_MULTIPLY DB "*"
+    GRAMMER_OPERATOR_DIVIDE DB "/"
     
     ;;;;;;;;;;;;
     ; 
