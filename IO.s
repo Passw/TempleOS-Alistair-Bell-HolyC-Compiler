@@ -27,3 +27,13 @@ StringLoop:
     MOV RDX, RBX
     SYSCALL
     RET
+
+PutStringFixed:
+    PUSH RAX
+    PUSH RSI
+    MOV RAX, 1
+    MOV RDI, 1
+    POP RSI
+    POP RDX
+    SYSCALL
+    RET

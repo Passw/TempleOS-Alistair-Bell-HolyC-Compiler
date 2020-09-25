@@ -4,6 +4,7 @@ section .bss
     Compiling resb 128
     FileData resb 10240
     ArgumentCount resb 8
+    TokenCounter resb 4
 
 section .text
     global _start
@@ -61,6 +62,30 @@ GetFileArguments:
 
     ; Arguments found, run rest of code
     CALL ReadFile
+
+Tokeniser: 
+    MOV RAX, FileData
+    PUSH RAX
+
+    MOV RBX, 0
+
+TokenLoop:
+    INC RAX
+    INC RBX
+    MOV CL, [RAX]
+    CMP CL, 32
+    JNE TokenLoop
+
+    MOV RAX, 1
+    MOV RDI, 1
+    POP RSI
+    MOV RDX, RBX
+    SYSCALL
+
+
+
+
+
 
 EndSequence:
     CALL Terminate ; call end
