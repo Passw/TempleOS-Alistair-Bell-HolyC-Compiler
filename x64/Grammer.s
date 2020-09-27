@@ -1,6 +1,5 @@
 section .data
 
-
     ;;;;;;;;;;;;
     ;
     ;   DATA TYPES

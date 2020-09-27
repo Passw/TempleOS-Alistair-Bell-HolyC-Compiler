@@ -1,15 +1,19 @@
 section .data
-    
+   FoundMessage DB "Found token ", 0
+
 section .bss
     Compiling resb 128
     FileData resb 10240
     ArgumentCount resb 8
     TokenCounter resb 4
+    TokenBuffer RESB 128
+
 
 section .text
     global _start
 
-%include "IO.s"
+%include "x64/IO.s"
+
 
 Terminate: ; Terminates the program
     MOV RAX, 231
@@ -27,7 +31,6 @@ ReadFile:
     CMP RAX, -2 ; -2 is for a invalid input
     JE EndSequence
 
-    ; Probally should handle errors but oh well
     PUSH RAX
     MOV RDI, RAX
     MOV RAX, 0 ; sys read
@@ -38,9 +41,6 @@ ReadFile:
     MOV RDI, 3
     POP RDI
     SYSCALL
-
-    MOV RAX, FileData
-    CALL PutString
 
     RET
     
@@ -63,27 +63,13 @@ GetFileArguments:
     ; Arguments found, run rest of code
     CALL ReadFile
 
-Tokeniser: 
-    MOV RAX, FileData
-    PUSH RAX
+    MOV RAX, 0
+    MOV [TokenCounter], RAX
+   
+    CALL Terminate
+    RET
 
-    MOV RBX, 0
-
-TokenLoop:
-    INC RAX
-    INC RBX
-    MOV CL, [RAX]
-    CMP CL, 32
-    JNE TokenLoop
-
-    MOV RAX, 1
-    MOV RDI, 1
-    POP RSI
-    MOV RDX, RBX
-    SYSCALL
-
-
-
+; Tokenise the input stream
 
 
 
