@@ -2,7 +2,7 @@ COMPILER 	:= nasm
 LINKER		:= ld
 FLAGS 		:= -f elf64 -F dwarf -g
 OUTPUT		:= Build
-OBJECTS		:= $(OUTPUT)/IO.o $(OUTPUT)/Main.o $(OUTPUT)/Grammer.o
+OBJECTS		:= $(OUTPUT)/IO.o $(OUTPUT)/Compiler.o $(OUTPUT)/Grammer.o
 TARGET		:= Compiler
 
 all: $(TARGET)
