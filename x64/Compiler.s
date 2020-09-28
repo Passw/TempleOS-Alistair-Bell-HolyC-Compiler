@@ -1,16 +1,16 @@
 section .data
-    NoInputFiles DB "No input files specified", 10, 0
-    InvalidFile DB "File not found : ", 0
-    CompilingFile DB "Compiling file: ", 0
-    
+    LogNoInputFiles DB "No input files specified", 0
+    LogInvalidFile DB "File not found : ", 0
+    LogCompilingFile DB "Compiling file: ", 0
+    LogFileTooBig DB "Compiling file exceeds file buffer limit: ", 0
     NewLine DB "", 0, 10
 
 
 section .bss
-    Compiling resb 128
-    FileData resb 10240
-    ArgumentCount resb 8
-
+    Compiling RESB 128
+    FileData RESB 10240
+    StatData RESB 144
+    ArgumentCount RESB 8
 
 section .text
     global _start
@@ -23,7 +23,7 @@ Terminate: ; Terminates the program
     SYSCALL
     RET
 
-ReadFile:
+OpenBufferStream:
     MOV RAX, 2
     MOV RDI, [Compiling]
     MOV RSI, 0
@@ -31,20 +31,44 @@ ReadFile:
     SYSCALL ; open buffer
 
     CMP RAX, -2 ; -2 is for a invalid input
-    JNE ReadBuffer
+    JNE GetBufferSize
 
 .label1:
-    MOV RAX, InvalidFile
+    MOV RAX, LogInvalidFile
     CALL PutString
 
     MOV RAX, [Compiling]
     CALL PutString
 
-    MOV RAX, NewLine
-    CALL PutString
     JE EndSequence
     RET
 
+GetBufferSize:
+    ; Finds the buffer size using stat 
+    MOV RAX, 4
+    MOV RSI, [Compiling]
+    MOV RSI, StatData
+    SYSCALL
+
+    ; File size in bytes has an offsetof 48 bytes and is a 64 bit integer
+    MOV RAX, [StatData + 48]
+    CMP RAX, 10240 ; Checking whether file file is greater than the buffer
+    JB ReadBuffer
+
+.label1:
+    PUSH RAX
+    MOV RAX, LogFileTooBig
+    CALL PutString
+    
+    MOV RAX, [Compiling]
+    CALL PutString
+
+    MOV RAX, NewLine
+    CALL PutString
+
+JMP EndSequence
+    RET
+        
 ReadBuffer:
     PUSH RAX
     MOV RDI, RAX
@@ -53,7 +77,7 @@ ReadBuffer:
     MOV RDX, 2048 ; bytes to read
 
     ; Close file
-    MOV RDI, 3
+    MOV RAX, 3
     POP RDI
     SYSCALL
 
@@ -67,9 +91,13 @@ _start:
     CMP RAX, 1
     JNE GetFileArguments
 
-.label1:
-    MOV RAX, NoInputFiles
-    CALL PutString 
+.label2:
+    MOV RAX, LogNoInputFiles
+    CALL PutString
+
+    MOV RAX, NewLine
+    CALL PutString
+
     CALL EndSequence
     RET
 
@@ -82,7 +110,7 @@ GetFileArguments:
     POP RAX ; First argument
     MOV [Compiling], RAX
 
-    MOV RAX, CompilingFile
+    MOV RAX, LogCompilingFile
     CALL PutString
 
     MOV RAX, [Compiling]
@@ -92,10 +120,9 @@ GetFileArguments:
     CALL PutString
 
     ; Arguments found, run rest of code
-    CALL ReadFile
+    CALL OpenBufferStream
 
-   
-    CALL Terminate
+    CALL EndSequence
     RET
 
 
