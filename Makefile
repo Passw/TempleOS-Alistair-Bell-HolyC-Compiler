@@ -10,7 +10,7 @@ all: $(TARGET)
 $(TARGET): $(OBJECTS)
 	$(LINKER) $(OBJECTS) -o $(TARGET)
 
-$(OUTPUT)/%.o : x64/%.s
+$(OUTPUT)/%.o : x64/%.asm
 	$(COMPILER) $(FLAGS) -o $@ $<
 
 clean:
