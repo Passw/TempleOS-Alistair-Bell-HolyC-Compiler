@@ -18,6 +18,9 @@ section .text
 %include "x64/IO.s"
 
 Terminate: ; Terminates the program
+    MOV RAX, NewLine
+    CALL PutString
+
     MOV RAX, 231
     MOV RDI, 0
     SYSCALL
@@ -34,19 +37,22 @@ OpenBufferStream:
     JNE GetBufferSize
 
 .label1:
+    MOV RAX, NewLine
+    CALL PutString
+
     MOV RAX, LogInvalidFile
     CALL PutString
 
     MOV RAX, [Compiling]
     CALL PutString
-
-    JE EndSequence
+    
+    CALL EndSequence
     RET
 
 GetBufferSize:
     ; Finds the buffer size using stat 
     MOV RAX, 4
-    MOV RSI, [Compiling]
+    MOV RDI, [Compiling]
     MOV RSI, StatData
     SYSCALL
 
@@ -56,17 +62,17 @@ GetBufferSize:
     JB ReadBuffer
 
 .label1:
-    PUSH RAX
+    
+    MOV RAX, NewLine
+    CALL PutString
+
     MOV RAX, LogFileTooBig
     CALL PutString
     
     MOV RAX, [Compiling]
     CALL PutString
 
-    MOV RAX, NewLine
-    CALL PutString
-
-JMP EndSequence
+    JMP EndSequence
     RET
         
 ReadBuffer:
@@ -95,9 +101,6 @@ _start:
     MOV RAX, LogNoInputFiles
     CALL PutString
 
-    MOV RAX, NewLine
-    CALL PutString
-
     CALL EndSequence
     RET
 
@@ -114,9 +117,6 @@ GetFileArguments:
     CALL PutString
 
     MOV RAX, [Compiling]
-    CALL PutString
-
-    MOV RAX, NewLine
     CALL PutString
 
     ; Arguments found, run rest of code
