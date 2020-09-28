@@ -97,7 +97,7 @@ _start:
     CMP RAX, 1
     JNE GetFileArguments
 
-.label2:
+.label1:
     MOV RAX, LogNoInputFiles
     CALL PutString
 
