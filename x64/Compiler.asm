@@ -17,33 +17,46 @@ section .text
 
 %include "x64/IO.asm"
 
+%define i8 byte
+%define u8 byte
+
+%define i16 word
+%define u16 word
+
+%define i32 dword
+%define u32 dword
+
+%define i64 qword 
+%define u64 qword 
+
+
 Terminate: ; Terminates the program
-    MOV RAX, NewLine
+    MOV i64 RAX, NewLine
     CALL PutString
 
-    MOV RAX, 231
+    MOV i64 RAX, 231
     MOV RDI, 0
     SYSCALL
     RET
 
 OpenBufferStream:
-    MOV RAX, 2
+    MOV i64 RAX, 2
     MOV RDI, [Compiling]
     MOV RSI, 0
     MOV RDX, 0644o
     SYSCALL ; open buffer
 
-    CMP RAX, -2 ; -2 is for a invalid input
+    CMP i64 RAX, -2 ; -2 is for a invalid input
     JNE GetBufferSize
 
 .label1:
-    MOV RAX, NewLine
+    MOV i64 RAX, NewLine
     CALL PutString
 
-    MOV RAX, LogInvalidFile
+    MOV i64 RAX, LogInvalidFile
     CALL PutString
 
-    MOV RAX, [Compiling]
+    MOV i64 RAX, [Compiling]
     CALL PutString
     
     CALL EndSequence
@@ -51,39 +64,39 @@ OpenBufferStream:
 
 GetBufferSize:
     ; Finds the buffer size using stat 
-    MOV RAX, 4
+    MOV i64 RAX, 4
     MOV RDI, [Compiling]
     MOV RSI, StatData
     SYSCALL
 
     ; File size in bytes has an offsetof 48 bytes and is a 64 bit integer
-    MOV RAX, [StatData + 48]
-    CMP RAX, 10240 ; Checking whether file file is greater than the buffer
+    MOV i64 RAX, [StatData + 48]
+    CMP i64 RAX, 10240 ; Checking whether file file is greater than the buffer
     JB ReadBuffer
 
 .label1:
     
-    MOV RAX, NewLine
+    MOV i64 RAX, NewLine
     CALL PutString
 
-    MOV RAX, LogFileTooBig
+    MOV i64 RAX, LogFileTooBig
     CALL PutString
     
-    MOV RAX, [Compiling]
+    MOV i64 RAX, [Compiling]
     CALL PutString
 
     JMP EndSequence
     RET
         
 ReadBuffer:
-    PUSH RAX
+    PUSH QWORD RAX
     MOV RDI, RAX
-    MOV RAX, 0 ; sys read
+    MOV i64 RAX, 0 ; sys read
     MOV RSI, FileData
     MOV RDX, 2048 ; bytes to read
 
     ; Close file
-    MOV RAX, 3
+    MOV i64 RAX, 3
     POP RDI
     SYSCALL
 
@@ -98,7 +111,7 @@ _start:
     JNE GetFileArguments
 
 .label1:
-    MOV RAX, LogNoInputFiles
+    MOV i64 RAX, LogNoInputFiles
     CALL PutString
 
     CALL EndSequence
@@ -113,14 +126,19 @@ GetFileArguments:
     POP RAX ; First argument
     MOV [Compiling], RAX
 
-    MOV RAX, LogCompilingFile
+    MOV i64 RAX, LogCompilingFile
     CALL PutString
 
-    MOV RAX, [Compiling]
+    MOV i64 RAX, [Compiling]
     CALL PutString
 
     ; Arguments found, run rest of code
     CALL OpenBufferStream
+
+Compilier:
+    
+
+
 
     CALL EndSequence
     RET
