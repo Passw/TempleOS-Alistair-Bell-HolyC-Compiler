@@ -11,6 +11,7 @@ section .bss
     FileData RESB 10240
     StatData RESB 144
     ArgumentCount RESB 8
+    CurrentFileHandle RESB 8
 
 section .text
     global _start
@@ -41,13 +42,15 @@ Terminate: ; Terminates the program
 
 OpenBufferStream:
     MOV i64 RAX, 2
-    MOV RDI, [Compiling]
-    MOV RSI, 0
-    MOV RDX, 0644o
+    MOV i64 RDI, [Compiling]
+    MOV i64 RSI, 0
+    MOV i64 RDX, 0644o
     SYSCALL ; open buffer
 
+    MOV [CurrentFileHandle], RAX
     CMP i64 RAX, -2 ; -2 is for a invalid input
     JNE GetBufferSize
+
 
 .label1:
     MOV i64 RAX, NewLine
@@ -65,8 +68,8 @@ OpenBufferStream:
 GetBufferSize:
     ; Finds the buffer size using stat 
     MOV i64 RAX, 4
-    MOV RDI, [Compiling]
-    MOV RSI, StatData
+    MOV i64 RDI, [Compiling]
+    MOV i64 RSI, StatData
     SYSCALL
 
     ; File size in bytes has an offsetof 48 bytes and is a 64 bit integer
@@ -89,11 +92,13 @@ GetBufferSize:
     RET
         
 ReadBuffer:
-    PUSH QWORD RAX
-    MOV RDI, RAX
+    PUSH i64 RAX
+    
+    MOV i64 RDI, [CurrentFileHandle]
     MOV i64 RAX, 0 ; sys read
-    MOV RSI, FileData
-    MOV RDX, 2048 ; bytes to read
+    MOV i64 RSI, FileData
+    MOV i64 RDX, 10240 ; bytes to read
+    SYSCALL
 
     ; Close file
     MOV i64 RAX, 3
@@ -119,7 +124,7 @@ _start:
 
 GetFileArguments:
 
-    MOV [ArgumentCount], RAX
+    MOV i64 [ArgumentCount], RAX
  
     POP RAX ; Pop of the file path
 
@@ -137,7 +142,6 @@ GetFileArguments:
 
 Compilier:
     
-
 
 
     CALL EndSequence
