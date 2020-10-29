@@ -1,8 +1,0 @@
-i8 main()
-{
-    i8 i = 0;
-    i += 2;
-    return i;
-}
-
-main;
