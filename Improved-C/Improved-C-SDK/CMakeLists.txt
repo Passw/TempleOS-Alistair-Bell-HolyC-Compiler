@@ -8,4 +8,7 @@ add_library(${PROJECT_NAME} STATIC
 
     Lexer.h
     Lexer.c
+
+    Stream.h
+    Stream.c
 )

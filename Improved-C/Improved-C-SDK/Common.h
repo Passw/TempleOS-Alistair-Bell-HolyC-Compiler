@@ -1,20 +1,19 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
 
-#define I8 char
-#define U8 unsigned char
-
-#define I16 short
-#define U16 unsigned short
-
-#define I32 int
-#define U32 unsigned int
-
-#define I64 long
-#define U64 unsigned long
-
-#define IC_SKD
+typedef char I8;
+typedef unsigned char U8;
+typedef short I16;
+typedef unsigned short U16;
+typedef int I32;
+typedef unsigned int U32;
+typedef long I64;
+typedef unsigned long U64;
 
 
 
