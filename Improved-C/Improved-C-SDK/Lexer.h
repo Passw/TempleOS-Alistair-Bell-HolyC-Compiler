@@ -20,7 +20,7 @@ typedef struct IC_CompilingFile
     I8                          *CurrentStream;
     U32                         Line;
     U32                         LineOffset;
-    U32                         LineCount;
+    U64                         LineCount;
 } IC_CompilingFile;
 
 typedef struct IC_LexerLoadStreamInfo
@@ -32,7 +32,8 @@ typedef struct IC_LexerLoadStreamInfo
 typedef struct IC_Lexer
 {
     IC_CompilingFile            *Files;
-    U32                         FileCount;
+    IC_CompilingFile            *CurrentFile;
+    U64                         FileCount;
 } IC_Lexer;
 
 /* 

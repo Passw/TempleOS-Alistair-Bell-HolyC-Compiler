@@ -38,7 +38,7 @@ U8 IC_TestRunTest(IC_TestCreateInfo *infos, U64 count, IC_TestRuntineInfo *runti
         }
         else
         {
-            printf("Test %s passed without errors (expected result achieved\n", infos->TestName);
+            printf("Test %s passed without errors (expected result achieved)\n", infos->TestName);
             runtime->SuccesCount++;
         }
         printf("%s\n", line);

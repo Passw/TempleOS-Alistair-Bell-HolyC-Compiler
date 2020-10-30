@@ -23,7 +23,7 @@ U8 IC_LexerLoadStream(IC_Lexer *lexer, IC_LexerLoadStreamInfo *info)
     stream.Path = info->Input;
     stream.Reallocatable = 1;
     stream.Data = file.CurrentStream;
-    stream.StreamSize = file.CurrentStream;
+    stream.StreamSize = &file.LineCount;
     U8 result = IC_StreamCreate(&stream);
     
     if (!result)
@@ -32,15 +32,13 @@ U8 IC_LexerLoadStream(IC_Lexer *lexer, IC_LexerLoadStreamInfo *info)
         return IC_False;
     }
 
-
-
     file.CurrentStream  = stream.Data;
     file.Line           = 0;
     file.LineOffset     = 0;
     memcpy(&lexer->Files[lexer->FileCount], &file, sizeof(IC_CompilingFile));
-    lexer->FileCount++;
 
-    IC_LexerStepForward(lexer);
+    lexer->CurrentFile = &lexer->Files[lexer->FileCount];
+    lexer->FileCount++;
     return IC_True;
 }
 U8 IC_LexerStepForward(IC_Lexer *lexer)

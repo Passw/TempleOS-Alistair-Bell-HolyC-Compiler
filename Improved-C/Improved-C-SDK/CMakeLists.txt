@@ -5,6 +5,7 @@ set(SDK_SOURCES
     SDK.h
 
     Tokens.h
+    Tokens.c
 
     Lexer.h
     Lexer.c
