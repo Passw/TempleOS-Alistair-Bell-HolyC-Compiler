@@ -2,44 +2,37 @@
 
 static IC_Lexer *Lexer;
 
+static U8 IC_CompilerParseArguments(const U32 argumentCount, const I8 **arguments, IC_LexerLoadStreamInfo *info)
+{
+    if (argumentCount <= 1)
+    {
+        printf("No arguments specified\n");
+        return IC_False;
+    }
+    info->Input         = arguments[1];
+    info->LexerFlags    = IC_LEXER_FLAGS_NONE;
+    return IC_True;
+}
+
 int main(const U32 argumentCount, const I8 **arguments)
 {
     Lexer = malloc(sizeof(IC_Lexer));
     
-    const char *compiling;
-    if (argumentCount <= 1)
-    {
-        printf("No file specified using Tests/Main.IC\n");
-        compiling = "Tests/Main.IC";
-    }
-    else
-    {
-        compiling = arguments[1];
-    }
-
-    
-    LexerCreate:
-    {
-        IC_LexerCreateInfo createInfo;
-        memset(&createInfo, 0, sizeof(IC_LexerCreateInfo));
-        
-        
-        IC_LexerCreate(Lexer, &createInfo);
-    }
-    
-
     LexerLoad:
     {
         IC_LexerLoadStreamInfo loadInfo;
         memset(&loadInfo, 0, sizeof(IC_LexerLoadStreamInfo));
-        loadInfo.Input = compiling;
-
+    
+        if (!IC_CompilerParseArguments(argumentCount, arguments, &loadInfo))
+            goto End;
         IC_LexerLoadStream(Lexer, &loadInfo);
     }
 
+    End:
+    {
+        IC_LexerDestroy(Lexer);
+        free(Lexer);
+    }
 
-
-    IC_LexerDestroy(Lexer);
-    free(Lexer);
     return 1;
 }

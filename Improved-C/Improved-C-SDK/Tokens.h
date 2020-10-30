@@ -23,7 +23,7 @@ typedef enum IC_LEXICAL_TOKENS_ENUM
     IC_LEXICAL_TOKENS_WHILE,
 } IC_LexicalTokens;
 
-typedef struct
+typedef struct IC_Token
 {
     const I8            *ReferenceFile;
     IC_LexicalTokens    Token;

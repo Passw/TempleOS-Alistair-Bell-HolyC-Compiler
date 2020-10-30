@@ -3,7 +3,7 @@
 
 #include "Common.h"
 
-typedef struct
+typedef struct IC_Stream
 {
     U8              Reallocatable;
     U64             *StreamSize;
@@ -11,7 +11,7 @@ typedef struct
     const I8        *Path;
 } IC_Stream;
 
-extern void IC_StreamCreate(IC_Stream *stream);
+extern U8 IC_StreamCreate(IC_Stream *stream);
 
 
 #endif

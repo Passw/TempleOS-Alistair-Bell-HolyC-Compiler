@@ -2,3 +2,4 @@
 #include "Tokens.h"
 #include "Lexer.h"
 #include "Stream.h"
+#include "Tests.h"

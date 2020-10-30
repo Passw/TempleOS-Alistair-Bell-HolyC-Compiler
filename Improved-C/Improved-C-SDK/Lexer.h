@@ -5,24 +5,31 @@
 #include "Stream.h"
 #include "Tokens.h"
 
-typedef struct 
+typedef enum
+{
+    IC_LEXER_FLAGS_NONE
+} IC_LexerFlags;
+
+typedef struct IC_LexerCreateInfo
 {
 
 } IC_LexerCreateInfo;
 
-typedef struct
+typedef struct IC_CompilingFile
 {
     I8                          *CurrentStream;
     U32                         Line;
     U32                         LineOffset;
+    U32                         LineCount;
 } IC_CompilingFile;
 
-typedef struct
+typedef struct IC_LexerLoadStreamInfo
 {
     const I8                    *Input;
+    IC_LexerFlags               LexerFlags;
 } IC_LexerLoadStreamInfo;
 
-typedef struct
+typedef struct IC_Lexer
 {
     IC_CompilingFile            *Files;
     U32                         FileCount;
@@ -32,10 +39,10 @@ typedef struct
     Lexer
 */
 
-extern void IC_LexerCreate(IC_Lexer *lexer, IC_LexerCreateInfo *info);
-extern void IC_LexerLoadStream(IC_Lexer *lexer, IC_LexerLoadStreamInfo *info);
-extern void IC_LexerStepForward(IC_Lexer *lexer);
-extern void IC_LexerDestroy(IC_Lexer *lexer);
+extern U8 IC_LexerCreate(IC_Lexer *lexer, IC_LexerCreateInfo *info);
+extern U8 IC_LexerLoadStream(IC_Lexer *lexer, IC_LexerLoadStreamInfo *info);
+extern U8 IC_LexerStepForward(IC_Lexer *lexer);
+extern U8 IC_LexerDestroy(IC_Lexer *lexer);
 
 
 #endif

@@ -1,6 +1,6 @@
 project(Improved-C-SDK)
 
-add_library(${PROJECT_NAME} STATIC
+set(SDK_SOURCES
     Common.h
     SDK.h
 
@@ -11,4 +11,9 @@ add_library(${PROJECT_NAME} STATIC
 
     Stream.h
     Stream.c
+
+    Tests.h
+    Tests.c
 )
+
+add_library(${PROJECT_NAME} STATIC ${SDK_SOURCES})
