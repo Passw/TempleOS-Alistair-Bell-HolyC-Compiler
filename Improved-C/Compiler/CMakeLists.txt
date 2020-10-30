@@ -1,7 +1,7 @@
 project(Improved-C-Compiler)
 
 set(COMPILER_SOURCES
-    Main.c
+    Compiler.c
 )
 include_directories(../)
 

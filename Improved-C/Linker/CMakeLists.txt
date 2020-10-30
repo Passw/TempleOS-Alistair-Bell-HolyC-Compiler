@@ -1,7 +1,7 @@
 project(Improved-C-Linker)
 
 set(LINKER_SOURCES
-    Main.c
+    Linker.c
 )
 
 add_executable(${PROJECT_NAME} ${LINKER_SOURCES})

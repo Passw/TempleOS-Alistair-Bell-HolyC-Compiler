@@ -33,6 +33,5 @@ int main(const U32 argumentCount, const I8 **arguments)
         IC_LexerDestroy(Lexer);
         free(Lexer);
     }
-
     return 1;
 }
