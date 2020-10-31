@@ -31,6 +31,7 @@ typedef enum IC_LEXICAL_TOKENS_ENUM
         Predefined types
     */
     IC_LEXICAL_TOKENS_I8,
+    IC_LEXICAL_TOKENS_U0,
     IC_LEXICAL_TOKENS_U8,
     IC_LEXICAL_TOKENS_I16,
     IC_LEXICAL_TOKENS_U16,
@@ -40,7 +41,6 @@ typedef enum IC_LEXICAL_TOKENS_ENUM
     IC_LEXICAL_TOKENS_U64,
     IC_LEXICAL_TOKENS_F32,
     IC_LEXICAL_TOKENS_F64,
-    IC_LEXICAL_TOKENS_VOID
 } IC_LexicalTokens;
 
 typedef struct IC_Token

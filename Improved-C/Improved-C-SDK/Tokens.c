@@ -19,14 +19,14 @@
 #define IC_LEXICAL_TOKENS_U64_STRING_HASH           193471396 /* U64 */
 #define IC_LEXICAL_TOKENS_F32_STRING_HASH           193454960 /* F32 */
 #define IC_LEXICAL_TOKENS_F64_STRING_HASH           193455061 /* F64 */
-#define IC_LEXICAL_TOKENS_VOID_STRING_HASH          6385805911 /* void */
+#define IC_LEXICAL_TOKENS_U0_STRING_HASH            5862762   /* void */
 
 
 
 
 #define IC_LEXICAL_TOKENS_MAX_STRING_HASH           18446744073709551615
 
-/* Needs collison testing */
+/* Needs collision testing */
 static U64 IC_TokenHashString(const I8 *source)
 {
     unsigned long hash = 5381;
@@ -44,7 +44,8 @@ U8 IC_TokenFromString(IC_Lexer *lexer, IC_Token *token, const I8 *source)
     token->ReferenceLine            = lexer->CurrentFile->Line;
     token->ReferenceLineIndex       = lexer->CurrentFile->LineOffset;
     
-    switch (IC_TokenHashString(source))
+    U64 hash = IC_TokenHashString(source);
+    switch (hash)
     {
         case IC_LEXICAL_TOKENS_SEMI_COLON_STRING_HASH:
         {
@@ -154,16 +155,21 @@ U8 IC_TokenFromString(IC_Lexer *lexer, IC_Token *token, const I8 *source)
             token->Token = IC_LEXICAL_TOKENS_F64;
             break;
         }
-        case IC_LEXICAL_TOKENS_VOID_STRING_HASH:
+        case IC_LEXICAL_TOKENS_U0_STRING_HASH:
         {
             printf("[%s][keyword]\n", source);
-            token->Token = IC_LEXICAL_TOKENS_VOID;
+            token->Token = IC_LEXICAL_TOKENS_U0;
             break;
         }
         default:
         {
             printf("[%s][identifier] - adding to symbol table\n", source);
-            return IC_True;
+            IC_LexerSymbol s;
+            memset(&s, 0, sizeof(IC_LexerSymbol));
+            s.Hash = hash;
+            s.HashSource = source;
+            IC_LexerSymbolAddTable(lexer, &s);
+            break;
         }
     }
     return IC_True;

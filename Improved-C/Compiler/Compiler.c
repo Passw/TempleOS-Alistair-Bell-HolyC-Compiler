@@ -27,6 +27,16 @@ int main(const U32 argumentCount, const I8 **arguments)
             goto End;
         IC_LexerLoadStream(Lexer, &loadInfo);
     }
+    
+    while (IC_LexerStepForward(Lexer));
+
+
+
+
+
+
+
+
 
     End:
     {

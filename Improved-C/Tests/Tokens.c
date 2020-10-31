@@ -11,6 +11,7 @@ U8 TokenTest(void *data)
         "*",
         "=",
         
+        "U0",
         "I8",
         "U8",
         "I16",
@@ -21,7 +22,6 @@ U8 TokenTest(void *data)
         "U64",
         "F32",
         "F64",
-        "void",
         "foo"
     };
     IC_Token t;
