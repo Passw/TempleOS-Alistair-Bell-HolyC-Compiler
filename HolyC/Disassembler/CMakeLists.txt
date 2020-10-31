@@ -1,4 +1,4 @@
-project(Improved-C-Disassembler)
+project(HolyC-Disassembler)
 
 set(DISASSEMBLER_SOURCES
     Disassembler.c

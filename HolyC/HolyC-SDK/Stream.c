@@ -1,6 +1,6 @@
 #include "Stream.h"
 
-U8 IC_StreamCreate(IC_Stream *stream)
+U8 HC_StreamCreate(HC_Stream *stream)
 {
     assert(stream != NULL);
     assert(stream->Path != NULL);
@@ -11,7 +11,7 @@ U8 IC_StreamCreate(IC_Stream *stream)
     if (file == NULL)
     {
         printf("Invalid file %s\n");
-        return IC_True;
+        return HC_True;
     }
 
     fseek(file, 0, SEEK_END);
@@ -27,5 +27,5 @@ U8 IC_StreamCreate(IC_Stream *stream)
 
     printf("Loading stream %s, length %lu\n", stream->Path, size);
     *stream->StreamSize = size;
-    return IC_True;
+    return HC_True;
 }

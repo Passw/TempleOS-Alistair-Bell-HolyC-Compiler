@@ -18,8 +18,8 @@ typedef unsigned long U64;
 typedef float F32;
 typedef double F64;
 
-#define IC_False 0
-#define IC_True 1
+#define HC_False 0
+#define HC_True 1
 
 
 #endif 

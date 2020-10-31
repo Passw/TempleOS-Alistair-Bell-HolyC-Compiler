@@ -1,4 +1,4 @@
-project(Improved-C-SDK)
+project(HolyC-SDK)
 
 set(SDK_SOURCES
     Common.h

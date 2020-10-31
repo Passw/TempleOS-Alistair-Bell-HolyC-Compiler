@@ -1,4 +1,4 @@
-project(Improved-C-Compiler)
+project(HolyC-Compiler)
 
 set(COMPILER_SOURCES
     Compiler.c
@@ -6,4 +6,4 @@ set(COMPILER_SOURCES
 include_directories(../)
 
 add_executable(${PROJECT_NAME} ${COMPILER_SOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC Improved-C-SDK)
+target_link_libraries(${PROJECT_NAME} PUBLIC HolyC-SDK)

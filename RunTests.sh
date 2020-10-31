@@ -4,5 +4,5 @@ cmake -B Build -D PROJECT_BUILD_TESTS=ON -D CMAKE_BUILD_TYPE=Debug
 cd Build && make
 cd ../
 
-./Build/Improved-C/Tests/Test-Tests
-./Build/Improved-C/Tests/Test-Tokens
+./Build/HolyC/Tests/Test-Tests
+./Build/HolyC/Tests/Test-Tokens

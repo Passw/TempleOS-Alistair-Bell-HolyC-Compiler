@@ -1,4 +1,4 @@
-project(Improved-C-Linker)
+project(HolyC-Linker)
 
 set(LINKER_SOURCES
     Linker.c
