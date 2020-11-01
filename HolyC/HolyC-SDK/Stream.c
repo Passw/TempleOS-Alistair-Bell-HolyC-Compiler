@@ -11,7 +11,7 @@ U8 HC_StreamCreate(HC_Stream *stream)
     if (file == NULL)
     {
         printf("Invalid file %s\n", stream->Path);
-        return HC_True;
+        return HC_False;
     }
 
     fseek(file, 0, SEEK_END);

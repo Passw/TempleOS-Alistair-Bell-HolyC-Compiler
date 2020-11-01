@@ -1,1 +1,1 @@
-U8 main(){} main;
+U8 main() {} main;

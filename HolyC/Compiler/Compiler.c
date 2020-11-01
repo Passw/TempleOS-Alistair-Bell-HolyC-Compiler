@@ -25,7 +25,8 @@ int main(const U32 argumentCount, const I8 **arguments)
     
         if (!HC_CompilerParseArguments(argumentCount, arguments, &loadInfo))
             goto End;
-        HC_LexerLoadStream(Lexer, &loadInfo);
+        if (!HC_LexerLoadStream(Lexer, &loadInfo))
+            goto End;
     }
     
     while (HC_LexerParse(Lexer));

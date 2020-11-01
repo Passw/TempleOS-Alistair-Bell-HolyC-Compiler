@@ -22,7 +22,10 @@ typedef enum HC_LEXICAL_TOKENS_ENUM
     HC_LEXICAL_TOKENS_EQUALS,  
 
     HC_LEXICAL_TOKENS_LEFT_PARAM,
-    HC_LEXICAL_TOKENS_RIGHT_PARAM, 
+    HC_LEXICAL_TOKENS_RIGHT_PARAM,
+
+    HC_LEXICAL_TOKENS_LEFT_CURLY,
+    HC_LEXICAL_TOKENS_RIGHT_CURLY,
     
     /*
         Keywords
@@ -51,9 +54,11 @@ typedef struct HC_Token
     HC_LexicalTokens    Token;
     I32                 ReferenceLine;
     I32                 ReferenceLineIndex;
+    U64                 Hash;
 } HC_Token;
 
 extern U8 HC_TokenFromString(HC_Lexer *lexer, HC_Token *token, const I8 *source);
+extern U8 HC_TokenCheckSingleChar(HC_Lexer *lexer, HC_Token *token, const I8 character);
 extern U8 HC_TokenCheckGrammer(HC_Lexer *lexer, HC_Token *token, const I8 *source);
 
 #endif
