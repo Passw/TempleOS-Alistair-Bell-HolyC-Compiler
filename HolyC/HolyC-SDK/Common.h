@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
+typedef void U0;
 typedef char I8;
 typedef unsigned char U8;
 typedef short I16;

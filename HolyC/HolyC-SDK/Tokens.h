@@ -19,7 +19,10 @@ typedef enum HC_LEXICAL_TOKENS_ENUM
     HC_LEXICAL_TOKENS_MINUS,
     HC_LEXICAL_TOKENS_MULTIPLY,
     HC_LEXICAL_TOKENS_DIVIDE,
-    HC_LEXICAL_TOKENS_EQUALS,   
+    HC_LEXICAL_TOKENS_EQUALS,  
+
+    HC_LEXICAL_TOKENS_LEFT_PARAM,
+    HC_LEXICAL_TOKENS_RIGHT_PARAM, 
     
     /*
         Keywords
@@ -51,6 +54,6 @@ typedef struct HC_Token
 } HC_Token;
 
 extern U8 HC_TokenFromString(HC_Lexer *lexer, HC_Token *token, const I8 *source);
-
+extern U8 HC_TokenCheckGrammer(HC_Lexer *lexer, HC_Token *token, const I8 *source);
 
 #endif

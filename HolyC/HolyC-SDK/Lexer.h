@@ -26,7 +26,7 @@ typedef struct HC_CompilingFile
     I8                          *CurrentStream;
     U32                         Line;
     U32                         LineOffset;
-    U64                         LineCount;
+    U64                         CharCount;
     HC_LexerSymbol              *Symbols;
     U32                         SymbolCount;
 } HC_CompilingFile;
@@ -50,7 +50,8 @@ typedef struct HC_Lexer
 
 extern U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info);
 extern U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info);
-extern U8 HC_LexerStepForward(HC_Lexer *lexer);
+extern U8 HC_LexerParse(HC_Lexer *lexer);
+extern U8 HC_LexerRemoveWhitespace(HC_Lexer *lexer, I8 *destination, const I8 *source);
 extern U8 HC_LexerSymbolAddTable(HC_Lexer *lexer, HC_LexerSymbol *symbol);
 extern U8 HC_LexerDestroy(HC_Lexer *lexer);
 

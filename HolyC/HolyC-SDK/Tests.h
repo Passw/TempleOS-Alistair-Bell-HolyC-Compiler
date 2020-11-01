@@ -12,14 +12,14 @@ typedef struct HC_TestCreateInfo
     U8              Assertion;
     const U8        *TestName;
     const U8        *FailMessage;
-    void            *ProgramData;
+    U0              *ProgramData;
     U8              ExpectedResult;
     HC_TestCallback Callback;
 } HC_TestCreateInfo;
 
 typedef struct HC_TestRuntineInfo
 {
-    U64             SuccesCount;
+    U64             SuccessCount;
     U64             FailCount;
 } HC_TestRuntineInfo; 
 

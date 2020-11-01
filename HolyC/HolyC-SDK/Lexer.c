@@ -1,5 +1,7 @@
 #include "Lexer.h"
 
+#define HC_LEXER_TOKEN_STRING_LENGTH 255
+
 U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
 {
     assert(lexer != NULL);
@@ -23,7 +25,7 @@ U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
     stream.Path = info->Input;
     stream.Reallocatable = 1;
     stream.Data = file.CurrentStream;
-    stream.StreamSize = &file.LineCount;
+    stream.StreamSize = &file.CharCount;
     U8 result = HC_StreamCreate(&stream);
     
     if (!result)
@@ -57,8 +59,38 @@ U8 HC_LexerSymbolAddTable(HC_Lexer *lexer, HC_LexerSymbol *symbol)
  
     return HC_True;
 }
-U8 HC_LexerStepForward(HC_Lexer *lexer)
+U8 HC_LexerParse(HC_Lexer *lexer)
 {
+    assert(lexer != NULL);
+    U64 newIndex = 0;
+    U64 oldIndex = 0;
+    U8 done = HC_False;
+
+    U64 charCount = lexer->CurrentFile->CharCount;
+    I8 src[charCount];
+    strcpy(src, lexer->CurrentFile->CurrentStream);
+
+    while (!done)
+    {
+        I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH];
+        /* Second last char */
+        if (newIndex == (charCount - 1))
+        {
+            strncpy(localBuffer, src + oldIndex, charCount - oldIndex);
+            printf("%s\n", localBuffer);
+            done = HC_True;
+        }
+
+        //printf("%c\n", src[newIndex]);
+        if (src[newIndex] == ' ')
+        {
+            memset(localBuffer, 0, sizeof(localBuffer));
+            strncpy(localBuffer, src + oldIndex, newIndex - oldIndex);
+            printf("%s\n", localBuffer);
+            oldIndex = newIndex + 1;
+        }
+        newIndex++;
+    }
 
     return HC_False;
 }
@@ -72,5 +104,25 @@ U8 HC_LexerDestroy(HC_Lexer *lexer)
     }
     free(lexer->Files);
 
+    return HC_True;
+}
+inline U8 HC_LexerRemoveWhitespace(HC_Lexer *lexer, I8 *destination, const I8 *source)
+{
+    if (strlen(source) <= 1)
+        return HC_True;
+    const U64 sourceLen = strlen(source);
+    U64 sourceIndex         = 0;
+    U64 destinationIndex    = 0;
+
+    while (source[sourceIndex] != '\0')
+    {
+        HC_Token token;
+        I8 ca[1];
+        ca[0] = source[sourceIndex];
+        printf("%s\n", ca);
+        HC_TokenCheckGrammer(lexer, &token, ca);
+        
+        sourceIndex++;
+    }
     return HC_True;
 }

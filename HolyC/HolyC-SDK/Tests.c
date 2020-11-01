@@ -39,7 +39,7 @@ U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runti
         else
         {
             printf("Test %s passed without errors (expected result achieved)\n", infos->TestName);
-            runtime->SuccesCount++;
+            runtime->SuccessCount++;
         }
         printf("%s\n", line);
     }

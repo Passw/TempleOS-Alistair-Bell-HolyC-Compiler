@@ -28,7 +28,7 @@ int main(const U32 argumentCount, const I8 **arguments)
         HC_LexerLoadStream(Lexer, &loadInfo);
     }
     
-    while (HC_LexerStepForward(Lexer));
+    while (HC_LexerParse(Lexer));
 
 
 
