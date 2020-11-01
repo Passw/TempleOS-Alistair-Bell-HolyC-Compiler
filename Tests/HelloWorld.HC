@@ -1,4 +1,4 @@
-U8 main
+U8 main()
 {
     "HelloWorld\n";
     return 1;
