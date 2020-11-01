@@ -43,7 +43,7 @@ U32 main()
     HC_LexerCreateInfo lc;
     memset(&lc, 0, sizeof(HC_LexerCreateInfo));
     HC_LexerCreate(&l, &lc);
-    HC_LexerLoadStream(&l, &(HC_LexerLoadStreamInfo){.Input = "Tests/Main.IC" });
+    HC_LexerLoadStream(&l, &(HC_LexerLoadStreamInfo){.Input = "Tests/Main.HC" });
 
     HC_TestCreateInfo tests[] =
     {
