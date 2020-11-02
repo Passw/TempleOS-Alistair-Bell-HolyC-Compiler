@@ -5,7 +5,7 @@
 
 typedef struct HC_TestCreateInfo HC_TestCreateInfo;
 
-typedef U8 (*HC_TestCallback)(void *);
+typedef U8 (*HC_TestCallback)(U0 *);
 
 typedef struct HC_TestCreateInfo
 {

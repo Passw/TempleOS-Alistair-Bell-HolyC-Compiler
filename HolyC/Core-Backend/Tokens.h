@@ -26,6 +26,9 @@ typedef enum HC_LEXICAL_TOKENS_ENUM
 
     HC_LEXICAL_TOKENS_LEFT_CURLY,
     HC_LEXICAL_TOKENS_RIGHT_CURLY,
+
+    HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET,
+    HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET,
     
     /*
         Keywords
@@ -55,6 +58,7 @@ typedef struct HC_Token
     I32                 ReferenceLine;
     I32                 ReferenceLineIndex;
     U64                 Hash;
+    const I8            *Source;
 } HC_Token;
 
 extern U8 HC_TokenFromString(HC_Lexer *lexer, HC_Token *token, const I8 *source);

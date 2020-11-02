@@ -1,16 +1,25 @@
 #include "Lexer.h"
 
 #define HC_LEXER_TOKEN_STRING_LENGTH 255
+#define HC_LEXER_TOKEN_SUBSTRING_MAX_COUNT 25
 
-static U8 HC_LexerFindSubtokens(HC_Lexer *lexer, HC_Token *token, const I8 *source)
+U8 HC_LexerFindSubtokens(HC_Lexer *lexer, HC_Token *token, U64 *count, const I8 *source)
 {
     I8 c;
     U8 foundSubtoken = HC_False;
+    U64 i = 0;
     while (c = *source++)
     {
-        HC_TokenCheckSingleChar(lexer, token, c);
+        HC_Token t;
+        if (HC_TokenCheckSingleChar(lexer, &t, c))
+        {
+            memcpy(&token[i], &t, sizeof(HC_Token));
+            i++;
+            foundSubtoken = HC_True;
+        }
     }
-    return HC_True;
+    *count = i;
+    return foundSubtoken;
 }
 
 U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
@@ -78,39 +87,36 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     U8 done = HC_False;
 
     U64 charCount = lexer->CurrentFile->CharCount;
+    I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH];
     I8 src[charCount];
     strcpy(src, lexer->CurrentFile->CurrentStream);
 
-    while (!done)
+    while (HC_True)
     {
-        I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH];
-        HC_Token token;
-        memset(&token, 0, sizeof(HC_Token));
-
-        /* Second last char */
-        if (newIndex == (charCount - 1))
+        if (src[newIndex] == ' ' || newIndex == (charCount - 1))
         {
-            strncpy(localBuffer, src + oldIndex, charCount - oldIndex);
-            HC_LexerFindSubtokens(lexer, &token, localBuffer);
-            done = HC_True;
-        }
-
-        //printf("%c\n", src[newIndex]);
-        if (src[newIndex] == ' ')
-        {
+            if (newIndex == (charCount - 1))
+                goto finalCopy;
             memset(localBuffer, 0, sizeof(localBuffer));
             strncpy(localBuffer, src + oldIndex, newIndex - oldIndex);
-            HC_LexerFindSubtokens(lexer, &token, localBuffer);
+            
+            U64 count;
+            HC_Token tokens[HC_LEXER_TOKEN_SUBSTRING_MAX_COUNT];
+            printf("%s\n", localBuffer);
+            HC_LexerFindSubtokens(lexer, tokens, &count, localBuffer);
             oldIndex = newIndex + 1;
         }
-
-        endLoop:
-        {
-            newIndex++;
-        }
+        newIndex++;
+    }
+    finalCopy:
+    {
+        strcpy(localBuffer, src + oldIndex);
+        printf("%s\n", localBuffer);
     }
 
-    return HC_False;
+    
+    end:
+        return HC_True;
 }
 U8 HC_LexerDestroy(HC_Lexer *lexer)
 {

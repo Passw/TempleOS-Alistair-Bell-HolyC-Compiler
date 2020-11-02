@@ -18,7 +18,7 @@ endif()
 add_subdirectory(HolyC/Compiler) # Compiler
 add_subdirectory(HolyC/Disassembler) # Dissasembler
 add_subdirectory(HolyC/Linker) # Linker
-add_subdirectory(HolyC/HolyC-SDK) # Interface library for common stuff
+add_subdirectory(HolyC/Core-Backend) # Interface library for common stuff
 
 if (PROJECT_BUILD_TESTS)
     add_subdirectory(HolyC/Tests)

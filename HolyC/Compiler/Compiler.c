@@ -1,4 +1,4 @@
-#include <HolyC-SDK/SDK.h>
+#include <Core-Backend/SDK.h>
 
 static HC_Lexer *Lexer;
 
@@ -29,7 +29,11 @@ int main(const U32 argumentCount, const I8 **arguments)
             goto End;
     }
     
-    while (HC_LexerParse(Lexer));
+    if (!HC_LexerParse(Lexer))
+    {
+        printf("Unable to parse %s\n", arguments[0]);
+        goto End;
+    }
 
 
 

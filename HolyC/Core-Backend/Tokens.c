@@ -9,6 +9,10 @@
 #define HC_LEXICAL_TOKENS_EQUALS_STRING_HASH        177634 /* = */  
 #define HC_LEXICAL_TOKENS_LEFT_PARAM_STRING_HASH    177613 /* ( */
 #define HC_LEXICAL_TOKENS_RIGHT_PARAM_STRING_HASH   177614 /* ) */
+
+#define HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH        177696  /* { */
+#define HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH       177698  /* } */
+
 #define HC_LEXICAL_TOKENS_FOR_STRING_HASH           193491852 /* for */
 #define HC_LEXICAL_TOKENS_WHILE_STRING_HASH         210732529790 /* while */
 #define HC_LEXICAL_TOKENS_I8_STRING_HASH            5862374   /* I8 */
@@ -47,6 +51,7 @@ U8 HC_TokenCheckSingleChar(HC_Lexer *lexer, HC_Token *token, const I8 character)
 {
     token->ReferenceLine            = lexer->CurrentFile->Line;
     token->ReferenceLineIndex       = lexer->CurrentFile->LineOffset;
+
 
     U64 hash = HC_TokenHashChar(character);
     switch (hash)
@@ -99,12 +104,25 @@ U8 HC_TokenCheckSingleChar(HC_Lexer *lexer, HC_Token *token, const I8 character)
             token->Token = HC_LEXICAL_TOKENS_RIGHT_PARAM;
             break;
         }
+        case HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH:
+        {
+            printf("[%c][scoper]\n", character);
+            token->Token = HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET;
+            break;
+        }
+        case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
+        {
+            printf("[%c][scoper]\n", character);
+            token->Token = HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET;
+            break;
+        }
         default:
         {
             token->Hash = HC_LEXICAL_TOKENS_MAX_STRING_HASH;
             return HC_False;
         }
     }
+    
     token->Hash = hash;
     return HC_True;
 }
@@ -208,6 +226,7 @@ U8 HC_TokenCheckGrammer(HC_Lexer *lexer, HC_Token *token, const I8 *source)
         }
     }
     token->Hash = hash;
+    token->Source = source;
     return HC_True;
 }
 U8 HC_TokenFromString(HC_Lexer *lexer, HC_Token *token, const I8 *source)
