@@ -1,4 +1,8 @@
-# HolyC compiler
+# [HolyC compiler](https://github.com/Alistair-Bell/HolyC-Compiler)
+
+<p align="centre">
+<a target="blank"><img src=.github/holyc-logo.svg height="100" width="100" alt="HolyC" /></a>
+</p>
 
 Variation to the C programming native to [TempleOS](https://templeos.org/).
 A recreation of the x64 compiler using C.
