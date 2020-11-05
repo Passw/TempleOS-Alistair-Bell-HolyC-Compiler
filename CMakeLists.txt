@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(Improved-C)
 
+enable_language(ASM_NASM)
+set(CMAKE_ASM_NASM_LINK_EXECUTABLE "ld <FLAGS> <CMAKE_ASM_NASM_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>")
+
+
 option(PROJECT_BUILD_TESTS "Build the test programs" OFF)
 
 if (NOT "${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
