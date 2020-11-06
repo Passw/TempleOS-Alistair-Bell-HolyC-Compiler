@@ -8,7 +8,7 @@ typedef struct HC_Lexer HC_Lexer;
 
 typedef enum HC_LEXICAL_TOKENS_ENUM
 {
-    HC_LEXICAL_TOKENS_INVALID = -1,
+    HC_LEXICAL_TOKENS_SYMBOL,
     
     HC_LEXICAL_TOKENS_SEMI_COLON,
 
@@ -60,9 +60,13 @@ typedef struct HC_Token
     U64                 Hash;
     const I8            *Source;
 } HC_Token;
+typedef struct HC_TokenHandleInfo
+{
+    HC_Lexer            *Lexer;
+    const I8            *Source;
+} HC_TokenHandleInfo;
 
-extern U8 HC_TokenFromString(HC_Lexer *lexer, HC_Token *token, const I8 *source);
-extern U8 HC_TokenCheckSingleChar(HC_Lexer *lexer, HC_Token *token, const I8 character);
-extern U8 HC_TokenCheckGrammer(HC_Lexer *lexer, HC_Token *token, const I8 *source);
+extern U8 HC_TokensCheckParserBreakCharacter(const I8 character);
+extern U8 HC_TokensHandleNew(HC_Token *token, HC_TokenHandleInfo *info);
 
 #endif

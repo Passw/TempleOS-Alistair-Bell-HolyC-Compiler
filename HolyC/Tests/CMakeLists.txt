@@ -4,13 +4,13 @@ include_directories(../)
 
 function(HolyC_Add_Test_Binary source binary)
     add_executable(${binary} ${source})
-    target_link_libraries(${binary} PUBLIC Core-Backend)
     message(STATUS "Adding test ${binary}")
+    target_link_libraries(${binary} PUBLIC Core-Backend)
 endfunction(HolyC_Add_Test_Binary)
 
 function(HolyC_Add_Test_Assemby_Amd64 source binary)
     add_executable(${binary} ${source})
-endfunction()
+endfunction(HolyC_Add_Test_Assemby_Amd64 source binary)
 
 if (${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
     HolyC_Add_Test_Assemby_Amd64(Amd64-Linux/Nasm-Assembler.asm Test-Nasm-Assembler )

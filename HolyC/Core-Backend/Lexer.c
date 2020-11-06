@@ -1,26 +1,7 @@
 #include "Lexer.h"
 
 #define HC_LEXER_TOKEN_STRING_LENGTH 255
-#define HC_LEXER_TOKEN_SUBSTRING_MAX_COUNT 25
-
-U8 HC_LexerFindSubtokens(HC_Lexer *lexer, HC_Token *token, U64 *count, const I8 *source)
-{
-    I8 c;
-    U8 foundSubtoken = HC_False;
-    U64 i = 0;
-    while (c = *source++)
-    {
-        HC_Token t;
-        if (HC_TokenCheckSingleChar(lexer, &t, c))
-        {
-            memcpy(&token[i], &t, sizeof(HC_Token));
-            i++;
-            foundSubtoken = HC_True;
-        }
-    }
-    *count = i;
-    return foundSubtoken;
-}
+#define HC_LEXER_TOKEN_ROUND_COUNT 255
 
 U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
 {
@@ -29,7 +10,6 @@ U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
     memset(lexer, 0, sizeof(HC_Lexer));
 
     lexer->Files = calloc(0, sizeof(HC_CompilingFile));
-
     return HC_True;
 }
 U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
@@ -82,41 +62,57 @@ U8 HC_LexerSymbolAddTable(HC_Lexer *lexer, HC_LexerSymbol *symbol)
 U8 HC_LexerParse(HC_Lexer *lexer)
 {
     assert(lexer != NULL);
-    U64 newIndex = 0;
-    U64 oldIndex = 0;
-    U8 done = HC_False;
 
-    U64 charCount = lexer->CurrentFile->CharCount;
-    I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH];
-    I8 src[charCount];
-    strcpy(src, lexer->CurrentFile->CurrentStream);
+    U64 i = 0; /* counter */
+    U64 leftPinscor     = 0; /* start index for the new token string */
+    U64 rightPinscor    = 0; /* end index for the new token string */
+    I8 localSource[lexer->CurrentFile->CharCount]; /* local source to prevent stream modifications */
+    HC_Token tokens[HC_LEXER_TOKEN_ROUND_COUNT]; /* all the tokens found */
+    memset(tokens, 0, sizeof(HC_Token) * HC_LEXER_TOKEN_ROUND_COUNT); 
+    I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH]; /* local buffer for the raw token data */
+    memset(localBuffer, 0, sizeof(I8) * HC_LEXER_TOKEN_STRING_LENGTH);
 
+    strcpy(localSource, lexer->CurrentFile->CurrentStream);
     while (HC_True)
     {
-        if (src[newIndex] == ' ' || newIndex == (charCount - 1))
+        I8 currentChar = localSource[i];
+        if (currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';')
         {
-            if (newIndex == (charCount - 1))
-                goto finalCopy;
-            memset(localBuffer, 0, sizeof(localBuffer));
-            strncpy(localBuffer, src + oldIndex, newIndex - oldIndex);
-            
-            U64 count;
-            HC_Token tokens[HC_LEXER_TOKEN_SUBSTRING_MAX_COUNT];
-            printf("%s\n", localBuffer);
-            HC_LexerFindSubtokens(lexer, tokens, &count, localBuffer);
-            oldIndex = newIndex + 1;
-        }
-        newIndex++;
-    }
-    finalCopy:
-    {
-        strcpy(localBuffer, src + oldIndex);
-        printf("%s\n", localBuffer);
-    }
+            rightPinscor = i;
+             
+            if (localSource[leftPinscor] == ' ' || leftPinscor == '\n' && (rightPinscor - leftPinscor != 1))
+                leftPinscor++;
 
-    
-    end:
-        return HC_True;
+            U64 diff = rightPinscor - leftPinscor;
+            
+            if (leftPinscor == rightPinscor)
+                goto update;
+
+            strncpy(localBuffer, localSource + leftPinscor, diff);
+            
+            HC_TokenHandleInfo handle;
+            memset(&handle, 0, sizeof(handle));
+            handle.Lexer            = lexer;
+            handle.Source           = localBuffer;
+            HC_TokensHandleNew(&tokens[i], &handle);
+
+            update:
+                leftPinscor = rightPinscor;
+        }
+        if (i == strlen(localSource) + 1)
+            break;
+        
+        endSequence:
+        {
+            i++;
+            memset(localBuffer, 0, sizeof(localBuffer));
+        }
+    }
+    finalChar:
+    {
+        memset(localBuffer, 0, sizeof(localBuffer));
+        strncpy(localBuffer, localSource + leftPinscor, strlen(localSource) - leftPinscor);
+    }
 }
 U8 HC_LexerDestroy(HC_Lexer *lexer)
 {
@@ -130,26 +126,3 @@ U8 HC_LexerDestroy(HC_Lexer *lexer)
 
     return HC_True;
 }
-/*
-inline U8 HC_LexerRemoveWhitespace(HC_Lexer *lexer, I8 *destination, const I8 *source)
-{
-    if (strlen(source) <= 1)
-        return HC_True;
-    const U64 sourceLen = strlen(source);
-    U64 sourceIndex         = 0;
-    U64 destinationIndex    = 0;
-
-    while (source[sourceIndex] != '\0')
-    {
-        HC_Token token;
-        I8 ca[1];
-        ca[0] = source[sourceIndex];
-        printf("%s\n", ca);
-        HC_TokenCheckGrammer(lexer, &token, ca);
-        
-        sourceIndex++;
-    }
-    return HC_True;
-}
-*/
-

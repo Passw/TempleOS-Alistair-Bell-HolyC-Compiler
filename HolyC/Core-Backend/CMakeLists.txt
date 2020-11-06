@@ -1,4 +1,4 @@
-project(HolyC-SDK)
+project(Core-Backend)
 
 set(SDK_SOURCES
     Common.h

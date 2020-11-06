@@ -50,7 +50,7 @@ typedef struct HC_Lexer
 
 extern U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info);
 extern U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info);
-extern U8 HC_LexerFindSubtokens(HC_Lexer *lexer, HC_Token *tokens, U64 *count,  const I8 *source);
+extern U8 HC_LexerFindTokens(HC_Lexer *lexer, HC_Token *tokens, U64 *count, const I8 *source);
 extern U8 HC_LexerParse(HC_Lexer *lexer);
 extern U8 HC_LexerRemoveWhitespace(HC_Lexer *lexer, I8 *destination, const I8 *source);
 extern U8 HC_LexerSymbolAddTable(HC_Lexer *lexer, HC_LexerSymbol *symbol);

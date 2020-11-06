@@ -9,10 +9,8 @@
 #define HC_LEXICAL_TOKENS_EQUALS_STRING_HASH        177634 /* = */  
 #define HC_LEXICAL_TOKENS_LEFT_PARAM_STRING_HASH    177613 /* ( */
 #define HC_LEXICAL_TOKENS_RIGHT_PARAM_STRING_HASH   177614 /* ) */
-
 #define HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH        177696  /* { */
 #define HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH       177698  /* } */
-
 #define HC_LEXICAL_TOKENS_FOR_STRING_HASH           193491852 /* for */
 #define HC_LEXICAL_TOKENS_WHILE_STRING_HASH         210732529790 /* while */
 #define HC_LEXICAL_TOKENS_I8_STRING_HASH            5862374   /* I8 */
@@ -46,204 +44,38 @@ static U64 HC_TokenHashChar(const I8 character)
     U64 hash = 5381;
     return ((hash << 5) + hash) + (I8)character;
 }
-
-U8 HC_TokenCheckSingleChar(HC_Lexer *lexer, HC_Token *token, const I8 character)
+U8 HC_TokensCheckParserBreakCharacter(const I8 character)
 {
-    token->ReferenceLine            = lexer->CurrentFile->Line;
-    token->ReferenceLineIndex       = lexer->CurrentFile->LineOffset;
-
-
-    U64 hash = HC_TokenHashChar(character);
-    switch (hash)
+    if (character == '\n' || character == ' ')
+        return HC_True;
+    switch (HC_TokenHashChar(character))
     {
         case HC_LEXICAL_TOKENS_SEMI_COLON_STRING_HASH:
-        {
-            printf("[%c][terminator]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_SEMI_COLON;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_PLUS_STRING_HASH:
-        {
-            printf("[%c][operator]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_PLUS;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_MINUS_STRING_HASH:
-        {
-            printf("[%c][operator]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_MINUS;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_MULTIPLY_STRING_HASH:
-        {
-            printf("[%c][operator]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_MULTIPLY;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_DIVIDE_STRING_HASH:
-        {
-            printf("[%c][operator]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_DIVIDE;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_EQUALS_STRING_HASH:
-        {
-            printf("[%c][assignment]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_EQUALS;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_LEFT_PARAM_STRING_HASH:
-        {
-            printf("[%c][scoper]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_LEFT_PARAM;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_RIGHT_PARAM_STRING_HASH:
-        {
-            printf("[%c][scoper]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_RIGHT_PARAM;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH:
-        {
-            printf("[%c][scoper]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET;
-            break;
-        }
+            return HC_True;
         case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
-        {
-            printf("[%c][scoper]\n", character);
-            token->Token = HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET;
-            break;
-        }
-        default:
-        {
-            token->Hash = HC_LEXICAL_TOKENS_MAX_STRING_HASH;
-            return HC_False;
-        }
+            return HC_True;
     }
+    return HC_False;
+}
+U8 HC_TokensHandleNew(HC_Token *token, HC_TokenHandleInfo *info)
+{
+    assert(token != NULL);
+    assert(info != NULL);
     
-    token->Hash = hash;
-    return HC_True;
-}
-
-U8 HC_TokenCheckGrammer(HC_Lexer *lexer, HC_Token *token, const I8 *source)
-{
-    assert(token != NULL);
-    assert(lexer != NULL);
-
-    token->ReferenceLine            = lexer->CurrentFile->Line;
-    token->ReferenceLineIndex       = lexer->CurrentFile->LineOffset;
-
-    U64 hash = HC_TokenHashString(source);
-    if (strlen(source) == 1)
-        return HC_TokenCheckSingleChar(lexer, token, source[0]);
-        
-    switch (hash)
-    {
-        case HC_LEXICAL_TOKENS_FOR_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_FOR;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_WHILE_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_WHILE;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_I8_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_FOR;
-            break;  
-        }
-        case HC_LEXICAL_TOKENS_U8_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_U8;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_I16_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_I16;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_U16_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_U16;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_I32_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_I32;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_U32_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_U32;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_I64_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_I64;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_U64_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_U64;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_F32_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_F32;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_F64_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_F64;
-            break;
-        }
-        case HC_LEXICAL_TOKENS_U0_STRING_HASH:
-        {
-            printf("[%s][keyword]\n", source);
-            token->Token = HC_LEXICAL_TOKENS_U0;
-            break;
-        }
-        default:
-        {
-            printf("[%s][undefined]\n", source);
-            token->Hash = HC_LEXICAL_TOKENS_MAX_STRING_HASH;
-        }
-    }
-    token->Hash = hash;
-    token->Source = source;
-    return HC_True;
-}
-U8 HC_TokenFromString(HC_Lexer *lexer, HC_Token *token, const I8 *source)
-{
-    assert(token != NULL);
-    assert(lexer != NULL);
-
-    U64 hash = HC_TokenHashString(source);
-    if (HC_TokenCheckGrammer(lexer, token, source) == HC_False)
-    {
-        printf("[%s][identifier] - adding to symbol table\n", source);
-        HC_LexerSymbol s;
-        memset(&s, 0, sizeof(HC_LexerSymbol));
-        s.Hash = hash;
-        s.HashSource = source;
-        HC_LexerSymbolAddTable(lexer, &s);
-    }
-
-    return HC_True;
 }

@@ -17,7 +17,6 @@ static U8 HC_CompilerParseArguments(const U32 argumentCount, const I8 **argument
 int main(const U32 argumentCount, const I8 **arguments)
 {
     Lexer = malloc(sizeof(HC_Lexer));
-    
     LexerLoad:
     {
         HC_LexerLoadStreamInfo loadInfo;
