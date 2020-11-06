@@ -8,10 +8,13 @@ function(HolyC_Add_Test_Binary source binary)
     message(STATUS "Adding test ${binary}")
 endfunction(HolyC_Add_Test_Binary)
 
-function(HolyC_Add_Test_Assemby source binary)
+function(HolyC_Add_Test_Assemby_Amd64 source binary)
     add_executable(${binary} ${source})
 endfunction()
 
+if (${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
+    HolyC_Add_Test_Assemby_Amd64(Nasm-Assembler.asm Test-Nasm-Assembler )
+add_test(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
+
 HolyC_Add_Test_Binary(Tests.c Test-Tests)
 HolyC_Add_Test_Binary(Tokens.c Test-Tokens)
-HolyC_Add_Test_Assemby(Nasm-Assembler.asm Test-Nasm-Assembler)
