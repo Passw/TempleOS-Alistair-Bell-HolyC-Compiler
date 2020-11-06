@@ -13,8 +13,8 @@ function(HolyC_Add_Test_Assemby_Amd64 source binary)
 endfunction()
 
 if (${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
-    HolyC_Add_Test_Assemby_Amd64(Nasm-Assembler.asm Test-Nasm-Assembler )
-add_test(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
+    HolyC_Add_Test_Assemby_Amd64(Amd64-Linux/Nasm-Assembler.asm Test-Nasm-Assembler )
+endif(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
 
 HolyC_Add_Test_Binary(Tests.c Test-Tests)
 HolyC_Add_Test_Binary(Tokens.c Test-Tokens)
