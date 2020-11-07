@@ -3,6 +3,7 @@ project(Improved-C)
 
 enable_language(ASM_NASM)
 set(CMAKE_ASM_NASM_LINK_EXECUTABLE "ld <FLAGS> <CMAKE_ASM_NASM_LINK_FLAGS> <LINK_FLAGS> <OBJECTS>  -o <TARGET> <LINK_LIBRARIES>")
+set(CMAKE_ASM_NASM_OBJECT_FORMAT elf64)
 
 
 option(PROJECT_BUILD_TESTS "Build the test programs" OFF)

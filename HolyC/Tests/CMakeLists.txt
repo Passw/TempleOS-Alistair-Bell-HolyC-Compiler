@@ -10,10 +10,11 @@ endfunction(HolyC_Add_Test_Binary)
 
 function(HolyC_Add_Test_Assemby_Amd64 source binary)
     add_executable(${binary} ${source})
+    target_compile_options(${binary} PUBLIC -f elf64 -g)
 endfunction(HolyC_Add_Test_Assemby_Amd64 source binary)
 
 if (${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
-    HolyC_Add_Test_Assemby_Amd64(Amd64-Linux/Nasm-Assembler.asm Test-Nasm-Assembler )
+    HolyC_Add_Test_Assemby_Amd64(Amd64-Linux/Nasm-Assembler.asm Test-Nasm-Assembler)
 endif(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
 
 HolyC_Add_Test_Binary(Tests.c Test-Tests)
