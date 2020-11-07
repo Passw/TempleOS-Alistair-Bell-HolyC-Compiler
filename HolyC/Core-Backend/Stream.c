@@ -1,5 +1,7 @@
 #include "Stream.h"
 
+#define HC_STREAM_MAX_FILE_BUFFER 1024 * 64 /* 64 mb */
+
 U8 HC_StreamCreate(HC_Stream *stream)
 {
     assert(stream != NULL);
@@ -16,6 +18,11 @@ U8 HC_StreamCreate(HC_Stream *stream)
 
     fseek(file, 0, SEEK_END);
     U64 size = ftell(file);
+    if (size >= HC_STREAM_MAX_FILE_BUFFER)
+    {
+        printf("Stream %s exceeds %luMb buffer limit (%luMb), failed to load\n", stream->Path, (U64)HC_STREAM_MAX_FILE_BUFFER / 1024, (U64)size / 1024);
+        return HC_False;
+    }
     
     if (stream->Reallocatable)
         stream->Data = realloc(stream->Data, size * sizeof(I8 *));

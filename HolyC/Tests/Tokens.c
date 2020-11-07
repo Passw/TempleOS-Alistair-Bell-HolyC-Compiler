@@ -2,39 +2,19 @@
 
 U8 TokenTest(void *data)
 {
-    const I8 *tokens[] = 
-    {
-        ";",
-        "+",
-        "-",
-        "/",
-        "*",
-        "=",
-        "(",
-        ")",
-        "U0",
-        "I8",
-        "U8",
-        "I16",
-        "U16",
-        "I32",
-        "U32",
-        "I64",
-        "U64",
-        "F32",
-        "F64",
-        "foo"
-    };
     HC_Token t;
     HC_Lexer l = *(HC_Lexer *)data;
 
-    I64 i;
-    for (i = 0; i < sizeof(tokens) / sizeof(const I8 *); i++)
+    U8 result = HC_LexerParse(&l);
+    if (!result)
+        return HC_False;
+    else
     {
-        //U8 result = HC_TokenFromString(&l, &t, tokens[i]);
-        //if (!result)
-        //    return HC_False;
+        I64 i;
+        for (i = 0; i < l.CurrentFile->TokenCount; i++)
+            printf("[%2lu][%s]\n", i, l.CurrentFile->Tokens[i].Source);
     }
+    
     return HC_True;
 }
 
@@ -44,11 +24,11 @@ U32 main()
     HC_LexerCreateInfo lc;
     memset(&lc, 0, sizeof(HC_LexerCreateInfo));
     HC_LexerCreate(&l, &lc);
-    HC_LexerLoadStream(&l, &(HC_LexerLoadStreamInfo){.Input = "Tests/Main.HC" });
+    HC_LexerLoadStream(&l, &(HC_LexerLoadStreamInfo){.Input = "Tests/NoWhitespace.HC" });
 
     HC_TestCreateInfo tests[] =
     {
-        {.Assertion = HC_False, .Callback = TokenTest, .ExpectedResult = HC_True, .TestName = "Tokenization & hashing test", .FailMessage = "Tokenization has failed", .ProgramData = &l },
+        {.Assertion = HC_False, .Callback = TokenTest, .ExpectedResult = HC_True, .TestName = "Tokenization Test (Tests/NoWhitespace.HC)", .FailMessage = "Tokenization has failed", .ProgramData = &l },
     };
 
 
