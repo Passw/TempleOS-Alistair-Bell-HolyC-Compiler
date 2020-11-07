@@ -77,5 +77,4 @@ U8 HC_TokensHandleNew(HC_Token *token, HC_TokenHandleInfo *info)
 {
     assert(token != NULL);
     assert(info != NULL);
-    
 }

@@ -28,7 +28,9 @@ typedef struct HC_CompilingFile
     U32                         LineOffset;
     U64                         CharCount;
     HC_LexerSymbol              *Symbols;
-    U32                         SymbolCount;
+    HC_Token                    *Tokens;
+    U64                         TokenCount;         
+    U64                         SymbolCount;
 } HC_CompilingFile;
 
 typedef struct HC_LexerLoadStreamInfo

@@ -67,8 +67,11 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     U64 leftPinscor     = 0; /* start index for the new token string */
     U64 rightPinscor    = 0; /* end index for the new token string */
     I8 localSource[lexer->CurrentFile->CharCount]; /* local source to prevent stream modifications */
+    U64 tokenCount = 0;
+    
     HC_Token tokens[HC_LEXER_TOKEN_ROUND_COUNT]; /* all the tokens found */
     memset(tokens, 0, sizeof(HC_Token) * HC_LEXER_TOKEN_ROUND_COUNT); 
+    
     I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH]; /* local buffer for the raw token data */
     memset(localBuffer, 0, sizeof(I8) * HC_LEXER_TOKEN_STRING_LENGTH);
 
@@ -85,20 +88,20 @@ U8 HC_LexerParse(HC_Lexer *lexer)
 
             U64 diff = rightPinscor - leftPinscor;
             
-            if (leftPinscor == rightPinscor)
+            if (leftPinscor == rightPinscor || rightPinscor < leftPinscor)
                 goto update;
 
-            strncpy(localBuffer, localSource + leftPinscor, diff);
+            lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+            memset(lexer->CurrentFile->Tokens[tokenCount].Source, 0, 255);
             
-            HC_TokenHandleInfo handle;
-            memset(&handle, 0, sizeof(handle));
-            handle.Lexer            = lexer;
-            handle.Source           = localBuffer;
-            HC_TokensHandleNew(&tokens[i], &handle);
-
+            strncpy(lexer->CurrentFile->Tokens[tokenCount].Source, localSource + leftPinscor, diff);
+            tokenCount++;
+        
             update:
                 leftPinscor = rightPinscor;
+                
         }
+
         if (i == strlen(localSource) + 1)
             break;
         
@@ -110,9 +113,13 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     }
     finalChar:
     {
-        memset(localBuffer, 0, sizeof(localBuffer));
-        strncpy(localBuffer, localSource + leftPinscor, strlen(localSource) - leftPinscor);
+        lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+        strncpy(lexer->CurrentFile->Tokens[tokenCount].Source, localSource + leftPinscor, strlen(localSource) - leftPinscor);
+        tokenCount++;
     }
+
+
+    lexer->CurrentFile->TokenCount = tokenCount;
 }
 U8 HC_LexerDestroy(HC_Lexer *lexer)
 {

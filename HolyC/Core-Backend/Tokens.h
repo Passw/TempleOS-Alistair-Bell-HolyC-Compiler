@@ -3,6 +3,7 @@
 
 #include "Common.h"
 
+#define HC_TOKEN_SOURCE_MAX_BUFFER_COUNT 255
 
 typedef struct HC_Lexer HC_Lexer;
 
@@ -58,12 +59,12 @@ typedef struct HC_Token
     I32                 ReferenceLine;
     I32                 ReferenceLineIndex;
     U64                 Hash;
-    const I8            *Source;
+    I8                  Source[HC_TOKEN_SOURCE_MAX_BUFFER_COUNT];
 } HC_Token;
 typedef struct HC_TokenHandleInfo
 {
     HC_Lexer            *Lexer;
-    const I8            *Source;
+    I8                  Source[HC_TOKEN_SOURCE_MAX_BUFFER_COUNT];
 } HC_TokenHandleInfo;
 
 extern U8 HC_TokensCheckParserBreakCharacter(const I8 character);
