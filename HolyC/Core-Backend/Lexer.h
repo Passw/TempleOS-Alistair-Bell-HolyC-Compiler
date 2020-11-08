@@ -49,6 +49,8 @@ typedef struct HC_Lexer
 /* 
     Lexer
 */
+extern inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar);
+extern inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar);
 extern U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info);
 extern U8 HC_LexerStripToken(I8 *src);
 extern U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info);

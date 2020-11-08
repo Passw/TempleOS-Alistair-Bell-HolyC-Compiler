@@ -3,11 +3,11 @@
 #define HC_LEXER_TOKEN_STRING_LENGTH 255
 #define HC_LEXER_TOKEN_ROUND_COUNT 255
 
-static inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
+U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
 {
     return currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';';
 }
-static inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
+U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
 {
     return currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';';
 }

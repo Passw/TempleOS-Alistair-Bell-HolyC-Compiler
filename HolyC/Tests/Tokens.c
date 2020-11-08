@@ -12,7 +12,12 @@ U8 TokenTest(void *data)
     {
         I64 i;
         for (i = 0; i < l.CurrentFile->TokenCount; i++)
+        {
+            const I8 *src = l.CurrentFile->Tokens[i].Source;
+            if (strlen(src) >= 1 && src[0] == HC_LexerCheckTerminationCharacterOrWhitespace(src[0]))
+                return HC_False;
             printf("[%2lu][%s]\n", i, l.CurrentFile->Tokens[i].Source);
+        }
     }
     
     return HC_True;
