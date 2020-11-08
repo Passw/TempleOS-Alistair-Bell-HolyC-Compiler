@@ -9,7 +9,7 @@ I32 main()
 {
     HC_TestCreateInfo tests[] = 
     {
-        (HC_TestCreateInfo) { .Assertion = HC_False, .Callback = FailTest, .ExpectedResult = HC_True, .TestName = "Fail test", .FailMessage = "Test has succesfully failed", .ProgramData = NULL }
+        (HC_TestCreateInfo) { .Assertion = HC_False, .Callback = FailTest, .ExpectedResult = HC_True, .TestName = "Fail test", .FailMessage = "Test has successfully failed", .ProgramData = NULL }
     };
     HC_TestRuntineInfo runtime;
 

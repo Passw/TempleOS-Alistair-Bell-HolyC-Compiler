@@ -34,7 +34,9 @@ I32 main(const U32 argumentCount, const I8 **arguments)
         goto End;
     }
 
-    
+    U64 i;
+    for (i = 0; i < Lexer->CurrentFile->TokenCount; i++)
+        printf("%s\n", Lexer->CurrentFile->Tokens[i].Source);
 
 
 

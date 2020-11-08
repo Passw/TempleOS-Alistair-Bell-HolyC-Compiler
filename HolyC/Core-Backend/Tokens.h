@@ -56,8 +56,6 @@ typedef enum HC_LEXICAL_TOKENS_ENUM
 typedef struct HC_Token
 {
     HC_LexicalTokens    Token;
-    I32                 ReferenceLine;
-    I32                 ReferenceLineIndex;
     U64                 Hash;
     I8                  Source[HC_TOKEN_SOURCE_MAX_BUFFER_COUNT];
 } HC_Token;
@@ -67,7 +65,8 @@ typedef struct HC_TokenHandleInfo
     I8                  Source[HC_TOKEN_SOURCE_MAX_BUFFER_COUNT];
 } HC_TokenHandleInfo;
 
-extern U8 HC_TokensCheckParserBreakCharacter(const I8 character);
-extern U8 HC_TokensHandleNew(HC_Token *token, HC_TokenHandleInfo *info);
+extern U64 HC_TokenHashString(const I8 *source);
+extern U64 HC_TokenHashChar(const I8 character);
+extern U8 HC_TokenCreate(HC_Token *token, HC_TokenHandleInfo *info);
 
 #endif

@@ -39,24 +39,13 @@ U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
     file.LineOffset     = 0;
     file.Symbols        = calloc(0, sizeof(HC_LexerSymbol));
     file.SymbolCount    = 0;
+    file.Tokens         = calloc(0, sizeof(HC_Token));
+    file.TokenCount     = 0;
     memcpy(&lexer->Files[lexer->FileCount], &file, sizeof(HC_CompilingFile));
     
     lexer->CurrentFile = &lexer->Files[lexer->FileCount];
 
     lexer->FileCount++;
-    return HC_True;
-}
-U8 HC_LexerSymbolAddTable(HC_Lexer *lexer, HC_LexerSymbol *symbol)
-{
-    assert(lexer != NULL);
-    assert(symbol != NULL);
-
-    U32 symbolCount = lexer->CurrentFile->SymbolCount;
-    lexer->CurrentFile->Symbols = realloc(lexer->CurrentFile->Symbols, (symbolCount + 1) * sizeof(HC_LexerSymbol));
-    memcpy(&lexer->CurrentFile->Symbols[symbolCount], symbol, sizeof(HC_LexerSymbol));
-    printf("Successfully added %s to symbol table\n", symbol->HashSource);
-    lexer->CurrentFile->SymbolCount++;
- 
     return HC_True;
 }
 U8 HC_LexerParse(HC_Lexer *lexer)
@@ -88,15 +77,25 @@ U8 HC_LexerParse(HC_Lexer *lexer)
 
             U64 diff = rightPinscor - leftPinscor;
             
-            if (leftPinscor == rightPinscor || rightPinscor < leftPinscor)
+            if (leftPinscor == rightPinscor || rightPinscor < leftPinscor || diff == 0)
                 goto update;
 
-            lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
-            memset(lexer->CurrentFile->Tokens[tokenCount].Source, 0, 255);
+            strncpy(localBuffer, localSource + leftPinscor, diff);
             
-            strncpy(lexer->CurrentFile->Tokens[tokenCount].Source, localSource + leftPinscor, diff);
-            tokenCount++;
-        
+            HC_LexerStripToken(localBuffer);
+            if (strlen(localBuffer) != 0)
+            {
+                lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+                HC_Token *t = &lexer->CurrentFile->Tokens[tokenCount];
+                HC_TokenHandleInfo h;
+                memset(&h, 0, sizeof(HC_TokenHandleInfo));
+                h.Lexer = lexer;
+                strcpy(h.Source, localBuffer);
+
+                HC_TokenCreate(t, &h);
+                tokenCount++;
+            }
+            
             update:
                 leftPinscor = rightPinscor;
                 
@@ -113,14 +112,29 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     }
     finalChar:
     {
-        lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
-        strncpy(lexer->CurrentFile->Tokens[tokenCount].Source, localSource + leftPinscor, strlen(localSource) - leftPinscor);
-        tokenCount++;
+        U64 diff = strlen(localSource) - leftPinscor;
+        strncpy(localBuffer, localSource + leftPinscor, diff);
+
+        HC_LexerStripToken(localBuffer);
+        if (strlen(localBuffer) != 0)
+        {
+            lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+            HC_Token *t = &lexer->CurrentFile->Tokens[tokenCount];
+            HC_TokenHandleInfo h;
+            memset(&h, 0, sizeof(HC_TokenHandleInfo));
+            h.Lexer = lexer;
+            strcpy(h.Source, localBuffer);
+                
+            HC_TokenCreate(t, &h);
+
+            tokenCount++;
+        }
     }
 
 
     lexer->CurrentFile->TokenCount = tokenCount;
 }
+
 U8 HC_LexerDestroy(HC_Lexer *lexer)
 {
     U32 i;
@@ -128,8 +142,28 @@ U8 HC_LexerDestroy(HC_Lexer *lexer)
     {
         free(lexer->Files[i].CurrentStream);
         free(lexer->Files[i].Symbols);
+        free(lexer->Files[i].Tokens);
     }
     free(lexer->Files);
 
+    return HC_True;
+}
+U8 HC_LexerStripToken(I8 *src)
+{
+    U32 i;
+    U32 begin = 0;
+    U32 end = strlen(src) - 1;
+
+    while (isspace((unsigned char) src[begin]))
+        begin++;
+
+    while ((end >= begin) && isspace((unsigned char) src[end]))
+        end--;
+
+    // Shift all characters back to the start of the string array.
+    for (i = begin; i <= end; i++)
+        src[i - begin] = src[i];
+
+    src[i - begin] = '\0'; // Null terminate string.
     return HC_True;
 }

@@ -1,0 +1,1 @@
+U8 main() { U64 i = 0; return i; } main; main; main;

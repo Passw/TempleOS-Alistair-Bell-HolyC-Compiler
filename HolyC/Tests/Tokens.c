@@ -23,8 +23,10 @@ U32 main()
     HC_Lexer l;
     HC_LexerCreateInfo lc;
     memset(&lc, 0, sizeof(HC_LexerCreateInfo));
-    HC_LexerCreate(&l, &lc);
-    HC_LexerLoadStream(&l, &(HC_LexerLoadStreamInfo){.Input = "Tests/NoWhitespace.HC" });
+    if (!HC_LexerCreate(&l, &lc))
+        return HC_False;
+    if (!HC_LexerLoadStream(&l, &(HC_LexerLoadStreamInfo){.Input = "Tests/NoWhitespaceLong.HC" }))
+        return HC_False;
 
     HC_TestCreateInfo tests[] =
     {
