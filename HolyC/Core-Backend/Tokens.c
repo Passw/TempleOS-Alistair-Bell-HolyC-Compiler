@@ -67,15 +67,15 @@ static inline U64 HC_TokenDetermineSpecialChar(HC_Token *token)
             token->Token = HC_LEXICAL_TOKENS_RIGHT_PARAM;
             return HC_True;
         case HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_LEFT_CURLY;
+            token->Token = HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET;
             return HC_True;
         case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_RIGHT_CURLY;
+            token->Token = HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET;
             return HC_True;
     }
     return HC_False;
 }
-static inline U64 HC_TokenDetermineType(HC_Token *token)
+static inline U8 HC_TokenDetermineType(HC_Token *token)
 {
     if (strlen(token->Source) == 1)
         HC_TokenDetermineSpecialChar(token);
@@ -182,5 +182,7 @@ U8 HC_TokenCreate(HC_Token *token, HC_TokenHandleInfo *info)
         token->Hash = HC_TokenHashChar(token->Source[0]);
     else
         token->Hash = HC_TokenHashString(token->Source);
+ 
+    HC_TokenDetermineType(token);        
     return HC_True;
 }
