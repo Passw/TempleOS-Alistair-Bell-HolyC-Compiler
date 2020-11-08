@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
+#include <time.h>
 
 typedef void U0;
 typedef char I8;

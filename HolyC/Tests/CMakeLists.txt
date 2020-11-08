@@ -19,3 +19,4 @@ endif(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64" AND UNIX)
 
 HolyC_Add_Test_Binary(Tests.c Test-Tests)
 HolyC_Add_Test_Binary(Tokens.c Test-Tokens)
+HolyC_Add_Test_Binary(Hashing.c Test-Hashing)

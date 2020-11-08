@@ -1,6 +1,6 @@
 #include <Core-Backend/SDK.h>
 
-U8 TokenTest(void *data)
+U8 TokenTest(U0 *data)
 {
     HC_Token t;
     HC_Lexer l = *(HC_Lexer *)data;
