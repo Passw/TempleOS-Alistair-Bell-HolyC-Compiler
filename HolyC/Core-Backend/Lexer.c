@@ -3,6 +3,15 @@
 #define HC_LEXER_TOKEN_STRING_LENGTH 255
 #define HC_LEXER_TOKEN_ROUND_COUNT 255
 
+static inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
+{
+    return currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';';
+}
+static inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
+{
+    return currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';';
+}
+
 U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
 {
     assert(lexer != NULL);
@@ -64,11 +73,14 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH]; /* local buffer for the raw token data */
     memset(localBuffer, 0, sizeof(I8) * HC_LEXER_TOKEN_STRING_LENGTH);
 
+    I8 localBufferCopy[HC_LEXER_TOKEN_STRING_LENGTH];
+    memset(localBufferCopy, 0, sizeof(I8) * HC_LEXER_TOKEN_STRING_LENGTH);
+
     strcpy(localSource, lexer->CurrentFile->CurrentStream);
     while (HC_True)
     {
         I8 currentChar = localSource[i];
-        if (currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';')
+        if (HC_LexerCheckTerminationCharacterOrWhitespace(currentChar))
         {
             rightPinscor = i;
              
@@ -81,8 +93,25 @@ U8 HC_LexerParse(HC_Lexer *lexer)
                 goto update;
 
             strncpy(localBuffer, localSource + leftPinscor, diff);
-            
+
             HC_LexerStripToken(localBuffer);
+
+            if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]) && diff != 1)
+            {
+                lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+
+                HC_Token *t = &lexer->CurrentFile->Tokens[tokenCount];
+                HC_TokenHandleInfo h;
+                memset(&h, 0, sizeof(HC_TokenHandleInfo));
+                strncpy(h.Source, localBuffer, 1);
+                HC_TokenCreate(t, &h);
+                tokenCount++;
+
+                strcpy(localBufferCopy, localBuffer);
+                strncpy(localBuffer, localBufferCopy + 1, strlen(localBufferCopy));
+            }
+
+
             if (strlen(localBuffer) != 0)
             {
                 lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
