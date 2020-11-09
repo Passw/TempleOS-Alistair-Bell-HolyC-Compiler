@@ -5,11 +5,19 @@
 
 inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
 {
-    return currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';';
+    return currentChar == '\n' 
+        || currentChar == '(' 
+        || currentChar == ')' 
+        || currentChar == '}' 
+        || currentChar == '{'
+        || currentChar == ' ' 
+        || currentChar == ';'
+        || currentChar == '['
+        || currentChar == ']';
 }
 inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
 {
-    return currentChar == '\n' || currentChar == '(' || currentChar == ')' || currentChar == '}' || currentChar == '{' || currentChar == ' ' || currentChar == ';';
+    return HC_LexerCheckTerminationCharacterOrWhitespace(currentChar) && (currentChar != ' ' && currentChar != '\n');
 }
 
 U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
