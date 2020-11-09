@@ -16,5 +16,5 @@ set(SDK_SOURCES
     Tests.h
     Tests.c
 )
-
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 add_library(${PROJECT_NAME} STATIC ${SDK_SOURCES})

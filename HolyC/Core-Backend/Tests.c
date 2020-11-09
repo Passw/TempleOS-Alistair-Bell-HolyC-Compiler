@@ -2,7 +2,7 @@
 
 static U8 HC_TestExecute(HC_TestCreateInfo *info)
 {
-   U8 result = info->Callback(info->ProgramData);
+   return info->Callback(info->ProgramData);
 }
 
 U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runtime)
@@ -51,7 +51,7 @@ U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runti
     }
     
     F32 successPercentage = ((F32)runtime->SuccessCount / count) * 100;
-    printf("Ran %lu test(s), success rate %.2f\%\n", count, successPercentage);
+    printf("Ran %lu test(s), success rate %.2f%%\n", count, successPercentage);
     printf("%s\n\n", line);
     return HC_True;
 }

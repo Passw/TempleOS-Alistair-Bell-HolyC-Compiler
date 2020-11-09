@@ -13,7 +13,10 @@ inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
         || currentChar == ' ' 
         || currentChar == ';'
         || currentChar == '['
-        || currentChar == ']';
+        || currentChar == ']'
+        || currentChar == '\''
+        || currentChar == '\"'
+        ;
 }
 inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
 {
@@ -92,7 +95,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
         {
             rightPinscor = i;
              
-            if (localSource[leftPinscor] == ' ' || leftPinscor == '\n' && (rightPinscor - leftPinscor != 1))
+            if (localSource[leftPinscor] == ' ' || (leftPinscor == '\n' && (rightPinscor - leftPinscor != 1)))
                 leftPinscor++;
 
             U64 diff = rightPinscor - leftPinscor;
@@ -141,13 +144,9 @@ U8 HC_LexerParse(HC_Lexer *lexer)
         if (i == strlen(localSource) + 1)
             break;
         
-        endSequence:
-        {
-            i++;
-            memset(localBuffer, 0, sizeof(localBuffer));
-        }
+        i++;
+        memset(localBuffer, 0, sizeof(localBuffer));
     }
-    finalChar:
     {
         U64 diff = strlen(localSource) - leftPinscor;
         strncpy(localBuffer, localSource + leftPinscor, diff);
@@ -168,8 +167,8 @@ U8 HC_LexerParse(HC_Lexer *lexer)
         }
     }
 
-
     lexer->CurrentFile->TokenCount = tokenCount;
+    return HC_True;
 }
 
 U8 HC_LexerDestroy(HC_Lexer *lexer)

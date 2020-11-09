@@ -7,7 +7,7 @@ typedef struct HC_Stream
 {
     U8              Reallocatable;
     U64             *StreamSize;
-    U8              *Data;
+    I8              *Data;
     const I8        *Path;
 } HC_Stream;
 
