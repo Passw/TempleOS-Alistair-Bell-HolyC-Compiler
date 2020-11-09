@@ -6,4 +6,4 @@ cd ../
 
 ./Build/HolyC/Tests/Test-Tests
 ./Build/HolyC/Tests/Test-Tokens
-./Build/HolyC/Tests/Test-Gas-Assembler
+./Build/HolyC/Tests/Test-HelloWorld
