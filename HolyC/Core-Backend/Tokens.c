@@ -159,7 +159,7 @@ U64 HC_TokenHashString(const I8 *source)
 {
     U64 hash = 5381;
     I32 c;
-    while (c = *source++)
+    while ((c = *source++))
         hash = ((hash << 5) + hash) + c;
     return hash;
 }
