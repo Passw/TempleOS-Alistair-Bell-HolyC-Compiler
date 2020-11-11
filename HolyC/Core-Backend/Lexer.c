@@ -15,8 +15,7 @@ inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
         || currentChar == '['
         || currentChar == ']'
         || currentChar == '\''
-        || currentChar == '\"'
-        ;
+        || currentChar == '\"';
 }
 inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
 {
@@ -86,7 +85,6 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     U64 rightPinscor    = 0; /* end index for the new token string */
     I8 localSource[lexer->CurrentFile->CharCount]; /* local source to prevent stream modifications */
     U64 tokenCount = 0;
-    HC_Token *currentToken = NULL;
     
     HC_Token tokens[HC_LEXER_TOKEN_ROUND_COUNT]; /* all the tokens found */
     memset(tokens, 0, sizeof(HC_Token) * HC_LEXER_TOKEN_ROUND_COUNT); 
@@ -104,20 +102,15 @@ U8 HC_LexerParse(HC_Lexer *lexer)
         if (HC_LexerCheckTerminationCharacterOrWhitespace(currentChar))
         {
             rightPinscor = i;
-             
-            if (localSource[leftPinscor] == ' ' || (leftPinscor == '\n' && (rightPinscor - leftPinscor != 1)))
-                leftPinscor++;
-
             U64 diff = rightPinscor - leftPinscor;
             
             if (leftPinscor == rightPinscor || rightPinscor < leftPinscor || diff == 0)
                 goto update;
 
             strncpy(localBuffer, localSource + leftPinscor, diff);
-
             HC_LexerStripToken(localBuffer);
 
-            if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]) && diff != 1)
+            if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]))
             {
                 lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
 
