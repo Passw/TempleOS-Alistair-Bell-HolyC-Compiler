@@ -8,7 +8,8 @@ include_directories(../)
 if (${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64")
     set(COMPILER_SOURCES
         ${COMPILER_SOURCES}
-        Amd64/Registers.h    
+        Amd64/Registers.h
+        Amd64/Instructions.h    
     )
 endif(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64")
 
