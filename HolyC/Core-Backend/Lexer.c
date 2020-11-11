@@ -21,13 +21,44 @@ inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
 {
     return HC_LexerCheckTerminationCharacterOrWhitespace(currentChar) && (currentChar != ' ' && currentChar != '\n');
 }
-static U8 HC_LexerAddToken(HC_Lexer *l, HC_Token *t, const I8 *src, const U64 count)
+
+static inline U8 HC_LexerAddToken(HC_Lexer *l, HC_Token *t, const I8 *src, const U64 count)
 {
     HC_TokenHandleInfo h;
     memset(&h, 0, sizeof(HC_TokenHandleInfo));
     strncpy(h.Source, src, count);
     h.Lexer = l;
     HC_TokenCreate(t, &h);
+    return HC_True;
+}
+
+static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMode, U64 *tokenCount, const I8 *src, const U64 count)
+{
+    HC_Token t;
+    HC_LexerAddToken(l, &t, src, count);
+    
+    switch (t.Token)
+    {
+        case HC_LEXICAL_TOKENS_STARTING_COMMENT:
+            *commentMode = HC_True;
+            break;
+
+        case HC_LEXICAL_TOKENS_ENDING_COMMENT:
+            *commentMode = HC_False;
+            break;
+
+        default:
+        {
+            if (*commentMode == HC_False)
+            {
+                l->CurrentFile->Tokens = realloc(l->CurrentFile->Tokens, sizeof(HC_Token) * (*tokenCount + 1));
+                memcpy(&l->CurrentFile->Tokens[*tokenCount], &t, sizeof(HC_Token));
+                *tokenCount += 1;
+            }
+        }
+
+    }
+
     return HC_True;
 }
 
@@ -86,6 +117,9 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     I8 localSource[lexer->CurrentFile->CharCount]; /* local source to prevent stream modifications */
     U64 tokenCount = 0;
     
+    U8 stringMode   = HC_False;
+    U8 commentMode  = HC_False;
+
     HC_Token tokens[HC_LEXER_TOKEN_ROUND_COUNT]; /* all the tokens found */
     memset(tokens, 0, sizeof(HC_Token) * HC_LEXER_TOKEN_ROUND_COUNT); 
     
@@ -110,22 +144,13 @@ U8 HC_LexerParse(HC_Lexer *lexer)
             strncpy(localBuffer, localSource + leftPinscor, diff);
             HC_LexerStripToken(localBuffer);
 
+            /* First char token */
             if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]))
-            {
-                lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+                HC_LexerHandleNewToken(lexer, &stringMode, &commentMode, &tokenCount, localBuffer, 1);
 
-                HC_LexerAddToken(lexer, &lexer->CurrentFile->Tokens[tokenCount], localBuffer, 1);
-                strcpy(localBufferCopy, localBuffer);
-                strncpy(localBuffer, localBufferCopy + 1, strlen(localBufferCopy));
-                tokenCount++;
-            }
-
+            /* Rest token */
             if (strlen(localBuffer) != 0)
-            {
-                lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
-                HC_LexerAddToken(lexer, &lexer->CurrentFile->Tokens[tokenCount], localBuffer, diff);
-                tokenCount++;
-            }
+                HC_LexerHandleNewToken(lexer, &stringMode, &commentMode, &tokenCount, localBuffer, diff);
             
             update:
                 leftPinscor = rightPinscor;
@@ -139,7 +164,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
         memset(localBuffer, 0, sizeof(localBuffer));
     }
     {
-        /* last token */
+        /* Last token */
         U64 diff = strlen(localSource) - leftPinscor;
         strncpy(localBuffer, localSource + leftPinscor, diff);
 
@@ -152,7 +177,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
             tokenCount++;
         }
     }
-
+    
     lexer->CurrentFile->TokenCount = tokenCount;
     return HC_True;
 }

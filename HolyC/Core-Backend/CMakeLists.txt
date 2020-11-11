@@ -10,6 +10,9 @@ set(SDK_SOURCES
     Lexer.h
     Lexer.c
 
+    Analyser.h
+    Analyser.c
+
     Stream.h
     Stream.c
 

@@ -28,8 +28,9 @@
 #define HC_LEXICAL_TOKENS_F32_STRING_HASH           193454960 /* F32 */
 #define HC_LEXICAL_TOKENS_F64_STRING_HASH           193455061 /* F64 */
 
-
-
+/* Other keywords */
+#define HC_LEXICAL_TOKENS_STARTING_COMMENT_STRING_HASH 5861502
+#define HC_LEXICAL_TOKENS_ENDING_COMMENT_STRING_HASH   5862987
 
 #define HC_LEXICAL_TOKENS_MAX_STRING_HASH           0xFFFFFFFFFFFFFFFF;
 
@@ -82,73 +83,53 @@ static inline U8 HC_TokenDetermineType(HC_Token *token)
 
     switch (token->Hash)
     {
+        case HC_LEXICAL_TOKENS_STARTING_COMMENT_STRING_HASH:
+            token->Token = HC_LEXICAL_TOKENS_STARTING_COMMENT;
+            return HC_True;
+        case HC_LEXICAL_TOKENS_ENDING_COMMENT_STRING_HASH:
+            token->Token = HC_LEXICAL_TOKENS_ENDING_COMMENT;
+            return HC_True;
         case HC_LEXICAL_TOKENS_FOR_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_FOR;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_WHILE_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_WHILE;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_U0_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_U0;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_I8_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_I8;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_U8_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_U8;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_I16_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_I16;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_U16_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_U16;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_I32_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_I32;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_U32_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_U32;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_I64_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_I64;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_U64_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_U64;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_F32_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_F32;
             return HC_True;
-        }
         case HC_LEXICAL_TOKENS_F64_STRING_HASH:
-        {
             token->Token = HC_LEXICAL_TOKENS_F64;
             return HC_True;
-        }
-
         default:
+            token->Token = HC_LEXICAL_TOKENS_NEW_SYMBOL;
             return HC_True;
     }
     return HC_True;
