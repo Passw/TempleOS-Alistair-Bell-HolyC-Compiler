@@ -152,6 +152,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
             if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]))
             {
                 HC_LexerHandleNewToken(lexer, &stringMode, &commentMode, &tokenCount, localBuffer, 1);
+                /* Offset new buffer by one to ignore the last added*/
                 strcpy(localBufferCopy, localBuffer);
                 strncpy(localBuffer, localBufferCopy + 1, strlen(localBufferCopy));
             }
