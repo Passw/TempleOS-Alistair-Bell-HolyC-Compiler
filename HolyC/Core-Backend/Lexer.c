@@ -37,16 +37,20 @@ static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMod
     HC_Token t;
     HC_LexerAddToken(l, &t, src, count);
     
+    
     switch (t.Token)
     {
         case HC_LEXICAL_TOKENS_STARTING_COMMENT:
+        {
             *commentMode = HC_True;
             break;
-
+        }
         case HC_LEXICAL_TOKENS_ENDING_COMMENT:
+        {
             *commentMode = HC_False;
             break;
-
+        }
+        
         default:
         {
             if (*commentMode == HC_False)
@@ -146,7 +150,11 @@ U8 HC_LexerParse(HC_Lexer *lexer)
 
             /* First char token */
             if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]))
+            {
                 HC_LexerHandleNewToken(lexer, &stringMode, &commentMode, &tokenCount, localBuffer, 1);
+                strcpy(localBufferCopy, localBuffer);
+                strncpy(localBuffer, localBufferCopy + 1, strlen(localBufferCopy));
+            }
 
             /* Rest token */
             if (strlen(localBuffer) != 0)
