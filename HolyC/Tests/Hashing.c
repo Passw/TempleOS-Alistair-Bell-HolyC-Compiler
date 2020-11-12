@@ -1,6 +1,4 @@
-#include <Core-Backend/Common.h>
-#include <Core-Backend/Tests.h>
-#include <Core-Backend/Tokens.h>
+#include <Core-Backend/SDK.h>
 
 static U8 SameHashResult(U0 *data)
 {

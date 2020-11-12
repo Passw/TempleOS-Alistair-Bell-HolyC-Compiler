@@ -6,16 +6,16 @@
 inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar)
 {
     return currentChar == '\n' 
+        || currentChar == ' ' 
         || currentChar == '(' 
         || currentChar == ')' 
         || currentChar == '}' 
         || currentChar == '{'
-        || currentChar == ' ' 
-        || currentChar == ';'
         || currentChar == '['
         || currentChar == ']'
-        || currentChar == '\''
-        || currentChar == '\"';
+        || currentChar == ';'
+        || currentChar == '\''  /* single quote */
+        || currentChar == '\"'; /* double quote */
 }
 inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar)
 {
@@ -31,25 +31,24 @@ static inline U8 HC_LexerAddToken(HC_Lexer *l, HC_Token *t, const I8 *src, const
     HC_TokenCreate(t, &h);
     return HC_True;
 }
-
 static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMode, U64 *tokenCount, const I8 *src, const U64 count)
 {
     HC_Token t;
     HC_LexerAddToken(l, &t, src, count);
-    
-    
     switch (t.Token)
     {
         case HC_LEXICAL_TOKENS_STARTING_COMMENT:
-        {
             *commentMode = HC_True;
             break;
-        }
         case HC_LEXICAL_TOKENS_ENDING_COMMENT:
-        {
             *commentMode = HC_False;
             break;
-        }
+        case HC_LEXICAL_TOKENS_SINGLE_QUOTE:
+            *strMode = 1 - (*strMode);
+            break;
+        case HC_LEXICAL_TOKENS_DOUBLE_QUOTE:
+            *strMode = 1 - (*strMode);
+            break;
         
         default:
         {
@@ -60,9 +59,7 @@ static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMod
                 *tokenCount += 1;
             }
         }
-
     }
-
     return HC_True;
 }
 
@@ -72,13 +69,15 @@ U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
     assert(info != NULL);
     memset(lexer, 0, sizeof(HC_Lexer));
 
-    lexer->Files = calloc(0, sizeof(HC_CompilingFile));
+    lexer->Files = calloc(info->LoadCount, sizeof(HC_CompilingFile));
+
+    U64 i;
+    for (i = 0; i < info->LoadCount; i++)
+        HC_LexerLoadStream(lexer, &info->Loads[i]);
     return HC_True;
 }
 U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
 {
-    lexer->Files        = calloc(lexer->FileCount + 1, sizeof(HC_CompilingFile));
-
     HC_CompilingFile file;
     memset(&file, 0, sizeof(HC_CompilingFile));
     file.CurrentStream = calloc(0, sizeof(I8 *));
@@ -98,16 +97,13 @@ U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
     }
 
     file.CurrentStream  = stream.Data;
-    file.Line           = 0;
-    file.LineOffset     = 0;
     file.Symbols        = calloc(0, sizeof(HC_LexerSymbol));
     file.SymbolCount    = 0;
     file.Tokens         = calloc(0, sizeof(HC_Token));
     file.TokenCount     = 0;
+    file.FileName       = info->Input;
     memcpy(&lexer->Files[lexer->FileCount], &file, sizeof(HC_CompilingFile));
     
-    lexer->CurrentFile = &lexer->Files[lexer->FileCount];
-
     lexer->FileCount++;
     return HC_True;
 }
@@ -147,7 +143,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
 
             strncpy(localBuffer, localSource + leftPinscor, diff);
             HC_LexerStripToken(localBuffer);
-
+            
             /* First char token */
             if (HC_LexerCheckTerminationCharacterNotWhitespace(localBuffer[0]))
             {
@@ -163,7 +159,6 @@ U8 HC_LexerParse(HC_Lexer *lexer)
             
             update:
                 leftPinscor = rightPinscor;
-                
         }
         
         if (i == strlen(localSource) + 1)
@@ -210,10 +205,10 @@ U8 HC_LexerStripToken(I8 *src)
     U32 begin = 0;
     U32 end = strlen(src) - 1;
 
-    while (isspace((unsigned char) src[begin]))
+    while (isspace((U8) src[begin]))
         begin++;
 
-    while ((end >= begin) && isspace((unsigned char) src[end]))
+    while ((end >= begin) && isspace((U8) src[end]))
         end--;
 
     // Shift all characters back to the start of the string array.

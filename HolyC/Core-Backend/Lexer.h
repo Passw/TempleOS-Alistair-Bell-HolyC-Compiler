@@ -10,11 +10,6 @@ typedef enum
     HC_LEXER_FLAGS_NONE
 } HC_LexerFlags;
 
-typedef struct HC_LexerCreateInfo
-{
-
-} HC_LexerCreateInfo;
-
 typedef struct HC_LexerSymbol
 {
     U64                         Hash;
@@ -23,9 +18,8 @@ typedef struct HC_LexerSymbol
 
 typedef struct HC_CompilingFile
 {
+    const I8                    *FileName;
     I8                          *CurrentStream;
-    U32                         Line;
-    U32                         LineOffset;
     U64                         CharCount;
     HC_LexerSymbol              *Symbols;
     HC_Token                    *Tokens;
@@ -38,6 +32,12 @@ typedef struct HC_LexerLoadStreamInfo
     const I8                    *Input;
     HC_LexerFlags               LexerFlags;
 } HC_LexerLoadStreamInfo;
+
+typedef struct HC_LexerCreateInfo
+{
+    HC_LexerLoadStreamInfo *Loads;
+    U64                     LoadCount;
+} HC_LexerCreateInfo;
 
 typedef struct HC_Lexer
 {

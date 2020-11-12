@@ -11,6 +11,8 @@
 #define HC_LEXICAL_TOKENS_RIGHT_PARAM_STRING_HASH   177614 /* ) */
 #define HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH        177696  /* { */
 #define HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH       177698  /* } */
+#define HC_LEXICAL_TOKENS_SINGLE_QUOTE_STRING_HASH  177612 /* ' */
+#define HC_LEXICAL_TOKENS_DOUBLE_QUOTE_STRING_HASH  177607 /* " */
 
 /* Predefined keywords */
 
@@ -72,6 +74,11 @@ static inline U64 HC_TokenDetermineSpecialChar(HC_Token *token)
             return HC_True;
         case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
             token->Token = HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET;
+            return HC_True;
+        case HC_LEXICAL_TOKENS_SINGLE_QUOTE_STRING_HASH:
+            token->Token = HC_LEXICAL_TOKENS_SINGLE_QUOTE;
+        case HC_LEXICAL_TOKENS_DOUBLE_QUOTE_STRING_HASH:
+            token->Token = HC_LEXICAL_TOKENS_DOUBLE_QUOTE;
             return HC_True;
     }
     return HC_False;

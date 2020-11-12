@@ -2,6 +2,8 @@ project(HolyC-Compiler)
 
 set(COMPILER_SOURCES
     Compiler.c
+    Compiler.h
+    CompilerMain.c
 )
 include_directories(../)
 

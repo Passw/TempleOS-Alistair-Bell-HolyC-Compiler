@@ -9,6 +9,8 @@ set(SDK_SOURCES
 
     Lexer.h
     Lexer.c
+    
+    Tokens.h
 
     Analyser.h
     Analyser.c
