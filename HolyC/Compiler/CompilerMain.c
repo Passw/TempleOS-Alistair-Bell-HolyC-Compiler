@@ -40,15 +40,19 @@ static const I8 *HC_CompilerParseArguments(const U32 argumentCount, const I8 **a
     return arguments[1];
 }
 
-I32 main(const U32 argumentCount, const I8 **arguments)
+I32 main(I32 argumentCount, const I8 **arguments)
 {
     Compiler            = malloc(sizeof(HC_Compiler));
     
     HC_LexerCreateInfo li;
     memset(&li, 0, sizeof(HC_LexerCreateInfo));
     li.LoadCount = 1;
-    li.Loads     = &(HC_LexerLoadStreamInfo) { .Input = HC_CompilerParseArguments(argumentCount, arguments), .LexerFlags = 0 };
 
+    const char *loading = HC_CompilerParseArguments(argumentCount, arguments);
+    if (loading == NULL)
+        return HC_False;
+
+    li.Loads     = &(HC_LexerLoadStreamInfo) { .Input = loading, .LexerFlags = 0 };
 
     HC_CompilerCreateInfo ci;
     memset(&ci, 0, sizeof(HC_CompilerCreateInfo));
@@ -57,7 +61,7 @@ I32 main(const U32 argumentCount, const I8 **arguments)
     HC_CompilerCreate(Compiler, &ci);
     HC_CompilerRun(Compiler);
 
-    
     HC_CompilerDestroy(Compiler);
+    free(Compiler);
     return 1;
 }
