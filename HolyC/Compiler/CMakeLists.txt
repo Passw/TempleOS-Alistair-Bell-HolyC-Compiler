@@ -15,5 +15,7 @@ if (${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64")
     )
 endif(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64")
 
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 add_executable(${PROJECT_NAME} ${COMPILER_SOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC Core-Backend)

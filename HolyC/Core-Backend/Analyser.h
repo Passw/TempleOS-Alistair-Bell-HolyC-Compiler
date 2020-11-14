@@ -6,6 +6,7 @@
 #include "Errors.h"
 #include "Stream.h"
 #include "Lexer.h"
+#include "Types.h"
 
 typedef struct HC_Lexer HC_Lexer;
 
@@ -14,7 +15,7 @@ typedef struct HC_SyntaxAnalyser
     const I8    *StreamName;
     HC_Token    *Analysing;
     HC_Error    *Errors;
-    U64         Count;
+    U64         AnalysingCount;
     U64         ErrorCount;
 } HC_SyntaxAnalyser;
 

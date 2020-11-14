@@ -10,14 +10,17 @@ U8 HC_CompilerCreate(HC_Compiler *compiler, HC_CompilerCreateInfo *info)
 }
 U8 HC_CompilerRun(HC_Compiler *compiler)
 {
-    U64 i, j;
+    U64 i;
     for (i = 0; i < compiler->Lexer.FileCount; i++)
     {
         compiler->Lexer.CurrentFile = &compiler->Lexer.Files[i];
-        HC_LexerParse(&compiler->Lexer);
+        if (!HC_LexerParse(&compiler->Lexer))
+            return HC_False;
     }
+    HC_SyntaxAnalyserCreate(&compiler->Analyser, &(HC_SyntaxAnalyserCreateInfo) { .Lexer = &compiler->Lexer });
+    HC_SyntaxAnalyserAnalyse(&compiler->Analyser);
+    return HC_True;
 }
-
 U8 HC_CompilerDestroy(HC_Compiler *compiler)
 {
     assert(compiler != NULL);

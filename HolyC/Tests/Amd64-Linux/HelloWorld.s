@@ -10,7 +10,6 @@
         t = ten bytes (80-bit floating point).
 */
 
-
 _start:
         
         movq   $len, %rdx

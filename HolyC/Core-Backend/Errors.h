@@ -4,11 +4,16 @@
 #include "Common.h"
 #include "Tokens.h"
 
+typedef enum HC_ErrorType
+{
+    HC_ERROR_TYPE_WARNING,
+    HC_ERROR_TYPE_FATAL_ERROR,
+} HC_ErrorType;
+
 typedef struct HC_Error
 {
-    U8 Fatal;
-    HC_Token *Referene;
+    HC_ErrorType Type;
+    HC_Token     *Reference;
 } HC_Error;
-
 
 #endif

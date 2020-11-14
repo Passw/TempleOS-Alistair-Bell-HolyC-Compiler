@@ -18,6 +18,9 @@ set(SDK_SOURCES
     Stream.h
     Stream.c
 
+    Types.h
+    Types.c
+
     Tests.h
     Tests.c
 )

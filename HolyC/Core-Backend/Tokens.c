@@ -38,7 +38,7 @@
 
 
 
-static inline U64 HC_TokenDetermineSpecialChar(HC_Token *token)
+static inline U64 HC_TokenDetermineSpecialChar(HC_Token *token, HC_Token *previousToken)
 {
     if (strlen(token->Source) != 1)
         return HC_False;
@@ -77,17 +77,15 @@ static inline U64 HC_TokenDetermineSpecialChar(HC_Token *token)
             return HC_True;
         case HC_LEXICAL_TOKENS_SINGLE_QUOTE_STRING_HASH:
             token->Token = HC_LEXICAL_TOKENS_SINGLE_QUOTE;
+            return HC_True;
         case HC_LEXICAL_TOKENS_DOUBLE_QUOTE_STRING_HASH:
             token->Token = HC_LEXICAL_TOKENS_DOUBLE_QUOTE;
             return HC_True;
     }
     return HC_False;
 }
-static inline U8 HC_TokenDetermineType(HC_Token *token)
+static inline U8 HC_TokenDetermineType(HC_Token *token, HC_Token *previousToken)
 {
-    if (strlen(token->Source) == 1)
-        HC_TokenDetermineSpecialChar(token);
-
     switch (token->Hash)
     {
         case HC_LEXICAL_TOKENS_STARTING_COMMENT_STRING_HASH:
@@ -136,7 +134,11 @@ static inline U8 HC_TokenDetermineType(HC_Token *token)
             token->Token = HC_LEXICAL_TOKENS_F64;
             return HC_True;
         default:
-            token->Token = HC_LEXICAL_TOKENS_NEW_SYMBOL;
+
+            if (previousToken != NULL && (previousToken->Token == HC_LEXICAL_TOKENS_SINGLE_QUOTE || previousToken->Token == HC_LEXICAL_TOKENS_DOUBLE_QUOTE))
+                token->Token = HC_LEXICAL_TOKENS_VALUE; /* string value */
+            else
+                token->Token = HC_LEXICAL_TOKENS_NEW_SYMBOL;
             return HC_True;
     }
     return HC_True;
@@ -162,15 +164,14 @@ U8 HC_TokenCreate(HC_Token *token, HC_TokenHandleInfo *info)
     assert(info != NULL);
     memset(token, 0, sizeof(HC_Token));
 
-    U64 srcLen = strlen(token->Source);
     HC_LexerStripToken(info->Source);
     strcpy(token->Source, info->Source);
 
-    if (srcLen == 1)
-        token->Hash = HC_TokenHashChar(token->Source[0]);
+    token->Hash = HC_TokenHashString(token->Source);
+    
+    if (info->SourceLength <= 1)
+        HC_TokenDetermineSpecialChar(token, info->PreviousToken);
     else
-        token->Hash = HC_TokenHashString(token->Source);
- 
-    HC_TokenDetermineType(token);        
+        HC_TokenDetermineType(token, info->PreviousToken);        
     return HC_True;
 }
