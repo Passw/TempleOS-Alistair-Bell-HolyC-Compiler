@@ -38,9 +38,6 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
     printf("Loaded %lu default values\n", builtInCount);
 
 
-    U64 i = 0;
-    HC_Token *current;
-    
     HC_SyntaxAnalyserPrintTokens(analyser);
 
 
