@@ -1,0 +1,7 @@
+#include "Common.h"
+#include "Tokens.h"
+#include "Lexer.h"
+#include "Stream.h"
+#include "Errors.h"
+#include "Analyser.h"
+#include "Tests.h"
