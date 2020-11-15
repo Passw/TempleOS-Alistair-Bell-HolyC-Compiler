@@ -18,11 +18,11 @@ else()
     Message(FATAL_ERROR "${ARCHITECTURE} has not been implimented")
 endif()
 
-add_subdirectory(HolyC/Compiler) # Compiler
-add_subdirectory(HolyC/Disassembler) # Dissasembler
-add_subdirectory(HolyC/Linker) # Linker
-add_subdirectory(HolyC/Core-Backend) # Interface library for common stuff
+add_subdirectory(HolyC-Tools/Compiler) # Compiler
+add_subdirectory(HolyC-Tools/Disassembler) # Dissasembler
+add_subdirectory(HolyC-Tools/Linker) # Linker
+add_subdirectory(HolyC-Tools/Core-Backend) # Interface library for common stuff
 
 if (PROJECT_BUILD_TESTS)
-    add_subdirectory(HolyC/Tests)
+    add_subdirectory(HolyC-Tools/Tests)
 endif(PROJECT_BUILD_TESTS)
