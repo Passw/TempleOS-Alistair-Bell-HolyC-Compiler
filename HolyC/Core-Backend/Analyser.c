@@ -1,10 +1,24 @@
 #include "Analyser.h"
 
+typedef struct HC_SyntaxAnalyserExpressionCreateInfo
+{
+    U64 Offset;
+    U64 Count;   
+} HC_SyntaxAnalyserExpressionCreateInfo;
+
 static U0 HC_SyntaxAnalyserPrintTokens(HC_SyntaxAnalyser *analyser)
 {
     U64 i;
     for (i = 0; i < analyser->AnalysingCount; i++)
         printf("[%3lu][%s]\n", i, analyser->Analysing[i].Source);
+}
+static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
+{
+    U64 i;
+    for (i = 0; i < info->Count; i++)
+        printf("[%lu][%s]\n", i, analyser->Analysing[i + info->Offset].Source);
+    printf("\n");
+    return HC_True;
 }
 
 U8 HC_SyntaxAnalyserCreate(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserCreateInfo *createInfo)
@@ -37,10 +51,34 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
     HC_DataTypesGetDefault(builtInTypes, &builtInCount, HC_False);
     printf("Loaded %lu default values\n", builtInCount);
 
+    if (analyser->AnalysingCount <= 1)
+    {
+        printf("Expected expression!\n");
+        return HC_False;
+    }
+    
+    U64 i         = 0;
+    U64 leftPnsr  = 0;
+    U64 rightPnsr = 0;
 
-    HC_SyntaxAnalyserPrintTokens(analyser);
+    while (HC_True)
+    {
+        rightPnsr = i;
+        HC_Token *current = &analyser->Analysing[i];
+        if (current->Token == HC_LEXICAL_TOKENS_SEMI_COLON)
+        {
+            HC_SyntaxAnalyserExpressionCreateInfo ci;
+            ci.Count  = (rightPnsr - leftPnsr);
+            ci.Offset = leftPnsr;
+            HC_SyntaxAnalyserCreateExpressions(analyser, &ci);
+            leftPnsr = rightPnsr + 1; /* ignore next semi colon */
+        }
 
+        if (i == analyser->AnalysingCount)
+            break;
 
+        i++;
+    }
 
     return HC_True;
 }
