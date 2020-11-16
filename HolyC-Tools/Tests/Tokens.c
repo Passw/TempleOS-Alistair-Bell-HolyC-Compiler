@@ -11,7 +11,7 @@ static U8 TokenTest(U0 *data)
         if (strlen(src) >= 1 && src[0] == HC_LexerCheckTerminationCharacterOrWhitespace(src[0], &j))
             return HC_False;
         printf("[%2lu][%s]\n", i, l.Files[0].Tokens[i].Source);
-    }    
+    }
     return HC_True;
 }
 
@@ -25,6 +25,8 @@ U32 main()
     ci.LoadCount = 1;
     ci.Loads     = &(HC_LexerLoadStreamInfo) { .Input = "Tests/NoWhitespaceMain.HC" };
     HC_LexerCreate(&l, &ci);
+    l.CurrentFile = &l.Files[0];
+    HC_LexerParse(&l);
 
     HC_TestCreateInfo tests[1];
     tests[0].Assertion      = HC_False;
