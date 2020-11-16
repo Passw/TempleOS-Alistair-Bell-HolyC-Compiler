@@ -14,8 +14,9 @@ This recreation will allow for HolyC to be usable outside TempleOS
 
 ```holyc
 /* Entry point */
-I32 demo()
+U0 demo()
 {
+    "Hello World\n";
     return 1; 
 }
 
