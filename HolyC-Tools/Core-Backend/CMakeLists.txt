@@ -17,12 +17,10 @@ set(SDK_SOURCES
 
     Stream.h
     Stream.c
-
-    Types.h
-    Types.c
-
+    
     Tests.h
     Tests.c
 )
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror") # With any legacy api the syntax is terrible, holyc is divine and clean
 add_library(${PROJECT_NAME} STATIC ${SDK_SOURCES})

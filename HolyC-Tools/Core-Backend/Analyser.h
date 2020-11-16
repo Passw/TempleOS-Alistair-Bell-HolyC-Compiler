@@ -6,9 +6,13 @@
 #include "Errors.h"
 #include "Stream.h"
 #include "Lexer.h"
-#include "Types.h"
 
 typedef struct HC_Lexer HC_Lexer;
+
+typedef struct HC_SyntaxAnalyserSymbol
+{
+    
+} HC_SyntaxAnalyserSymbol;
 
 typedef struct HC_SyntaxAnalyser
 {
