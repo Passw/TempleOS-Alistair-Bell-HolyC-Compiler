@@ -19,12 +19,16 @@ U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runti
     
     U64 i;
     printf("Running %lu tests\n", count);
-    const I8 *line = "------------------------------------------";
     
     for (i = 0; i < count; i++)
     {
         HC_TestCreateInfo *current = &infos[i];
+        I8 line[255];
+        memset(line, 0, sizeof(line));
+
+
         printf("\tRunning test %lu: %s\n", i + 1, current->TestName);
+        memset(line, (I8)'-', strlen(current->TestName) + 24);
         printf("%s\n", line);
 
         U8 testResult = HC_TestExecute(current);
@@ -44,7 +48,8 @@ U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runti
         }
         else
         {
-            printf("Test %s passed without errors (expected result achieved)\n", infos->TestName);
+            printf("Test %s passed without errors (expected result achieved)\n", current->TestName);
+            memset(line, (I8)'-', strlen(current->TestName) + 56);
             runtime->SuccessCount++;
         }
         printf("%s\n", line);
@@ -52,6 +57,6 @@ U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runti
     
     F32 successPercentage = ((F32)runtime->SuccessCount / count) * 100;
     printf("Ran %lu test(s), success rate %.2f%%\n", count, successPercentage);
-    printf("%s\n\n", line);
+
     return HC_True;
 }
