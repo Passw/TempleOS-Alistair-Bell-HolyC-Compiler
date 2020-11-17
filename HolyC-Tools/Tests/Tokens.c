@@ -64,7 +64,7 @@ U32 main()
     tests[0].Assertion      = HC_False;
     tests[0].ProgramData    = &l;
 
-    tests[1].TestName       = "Token Striper test (Tests/NoWhitespaceMain.HC)";
+    tests[1].TestName       = "Token Striper test (Tests/Comment.HC)";
     tests[1].FailMessage    = "Token striping has failed";
     tests[1].Callback       = TokenComment;
     tests[1].ExpectedResult = HC_True;
