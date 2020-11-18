@@ -16,7 +16,7 @@ static U8 TokenWhitespace(U0 *data)
         const I8 *src = t->Source;
         if (strlen(src) >= 1 && src[0] == HC_LexerCheckTerminationCharacterOrWhitespace(src[0], &j))
         {
-            printf("Whitespace character present [line %d: index %d]: %s\n", t->Line, t->LineOffset, t->Source);
+            printf("Whitespace character present [line %d]: %s\n", t->Line, t->Source);
             return HC_False;
         }
         printf("[%2lu][%s]\n", i, t->Source);
@@ -36,7 +36,7 @@ static U8 TokenComment(U0 *data)
         t = &l.CurrentFile->Tokens[i];
         if (t->Hash == HC_LEXICAL_TOKENS_STARTING_COMMENT_STRING_HASH || t->Hash == HC_LEXICAL_TOKENS_ENDING_COMMENT_STRING_HASH)
         {
-            printf("Comment token found  [line %d: index %d]: %s\n", t->Line, t->LineOffset, t->Source);
+            printf("Comment token found [line %d]: %s\n", t->Line, t->Source);
             return HC_False;
         }
         printf("[%2lu][%s]\n", i, t->Source);

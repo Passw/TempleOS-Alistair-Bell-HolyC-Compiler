@@ -26,7 +26,6 @@ U8 HC_TestRunTest(HC_TestCreateInfo *infos, U64 count, HC_TestRuntineInfo *runti
         I8 line[255];
         memset(line, 0, sizeof(line));
 
-
         printf("\tRunning test %lu: %s\n", i + 1, current->TestName);
         memset(line, (I8)'-', strlen(current->TestName) + 24);
         printf("%s\n", line);

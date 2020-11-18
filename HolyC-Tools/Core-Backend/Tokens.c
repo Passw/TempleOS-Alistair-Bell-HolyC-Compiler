@@ -131,6 +131,7 @@ U8 HC_TokenCreate(HC_Token *token, HC_TokenHandleInfo *info)
     strcpy(token->Source, info->Source);
 
     token->Hash = HC_TokenHashString(token->Source);
+    token->Line        = info->Line;
     
     if (info->SourceLength <= 1)
         HC_TokenDetermineSpecialChar(token, info->PreviousToken);

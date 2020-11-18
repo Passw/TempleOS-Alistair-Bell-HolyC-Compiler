@@ -6,12 +6,6 @@ typedef struct HC_SyntaxAnalyserExpressionCreateInfo
     U64 Count;
 } HC_SyntaxAnalyserExpressionCreateInfo;
 
-static U0 HC_SyntaxAnalyserPrintTokens(HC_SyntaxAnalyser *analyser)
-{
-    U64 i;
-    for (i = 0; i < analyser->AnalysingCount; i++)
-        printf("[%3lu][%s]\n", i, analyser->Analysing[i].Source);
-}
 static U8 HC_SyntaxAnalyserCheckBuiltInType(const U64 hash)
 {
     switch (hash)
@@ -40,7 +34,7 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
     {
         if (info->Count == 1)
         {
-            printf("Invalid syntax [line %d: index %d]: Expected expression after %s\n", indexer->Line, indexer->LineOffset + 1, indexer->Source);
+            printf("Invalid syntax [line %d]: Expected expression after %s\n", indexer->Line, indexer->Source);
             return HC_False;
         }
         
@@ -49,12 +43,12 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
         /* Check repetition */
         if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash))
         {
-            printf("Invalid syntax [line %d: index %d]: Repetition of type %s\n", indexer->Line, indexer->LineOffset + 1, indexer->Source);
+            printf("Invalid syntax [line %d]: Repetition of type %s\n", indexer->Line, indexer->Source);
             return HC_False;
         }
         else
         {
-            printf("New symbol of %s with type %s\n", indexer->Source, analyser->Analysing[info->Offset].Source);
+            printf("New symbol added: of %s with type %s\n", indexer->Source, analyser->Analysing[info->Offset].Source);
             /* Add to symbol table and validate no others in outwards scopes */
         }
 
@@ -103,8 +97,6 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
     U64 rightPnsr = 0;
     U64 scope     = 0;
 
-    HC_SyntaxAnalyserPrintTokens(analyser);
-
     while (HC_True)
     {
         rightPnsr = i;
@@ -116,7 +108,11 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
                 HC_SyntaxAnalyserExpressionCreateInfo ci;
                 ci.Count  = (rightPnsr - leftPnsr);
                 ci.Offset = leftPnsr;
-                HC_SyntaxAnalyserCreateExpressions(analyser, &ci);
+                if (HC_SyntaxAnalyserCreateExpressions(analyser, &ci) == HC_False)
+                {
+                    printf("Failed to analyse %s\n", analyser->StreamName);
+                    return HC_False;
+                }
                 leftPnsr = rightPnsr + 1; /* ignore next semi colon */
                 break;
             }
@@ -129,7 +125,7 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
             {
                 if (scope == 0)
                 {
-                    printf("Syntax error [line %d: index %d]: trying to dereference scope, %s detected\n", current->Line, current->LineOffset + 1, current->Source);
+                    printf("Syntax error [line %d]: trying to dereference scope, %s detected\n", current->Line, current->Source);
                     return HC_False;
                 }
                 scope--;

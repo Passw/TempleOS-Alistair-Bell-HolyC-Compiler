@@ -95,7 +95,6 @@ typedef struct HC_Token
 {
     U64                 Hash;
     U32                 Line;
-    U32                 LineOffset;
     I8                  Source[HC_TOKEN_SOURCE_MAX_BUFFER_COUNT];
     HC_LexicalTokens    Token;
 } HC_Token;
@@ -105,7 +104,6 @@ typedef struct HC_TokenHandleInfo
     HC_Token            *PreviousToken;
     U64                 SourceLength;
     U32                 Line;
-    U32                 LineOffset;
     I8                  Source[HC_TOKEN_SOURCE_MAX_BUFFER_COUNT];
 } HC_TokenHandleInfo;
 
