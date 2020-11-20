@@ -23,7 +23,6 @@ U32 main()
     ci.LoadCount = 1;
     ci.Loads     = &(HC_LexerLoadStreamInfo) { .Input = "Tests/Errors/ExpectedExpressions.HC" };
 
-
     if (!HC_LexerCreate(&l, &ci))
         return HC_False;
 
@@ -33,8 +32,8 @@ U32 main()
     tests[0].TestName       = "Parsing broken file (Tests/Errors/ExpectedExpressions.HC)";
     tests[0].FailMessage    = "Failed to recognise broken file (Tests/Errors/ExpectedExpressions.HC)";
     tests[0].Callback       = ParseInvalid;
-    tests[0].ExpectedResult = HC_False;
     tests[0].ProgramData    = &l;
+    tests[0].ExpectedResult = HC_False;
     tests[0].Assertion      = HC_True;
 
     HC_TestRuntineInfo ri;

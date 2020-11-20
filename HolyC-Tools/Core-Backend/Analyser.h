@@ -24,9 +24,17 @@
 
 #define HC_ANALYSER_GLOBAL_SCOPE_REFERENCE 0 /* the largest smallest will be the value for global scopes */
 
+typedef struct HC_SyntaxAnalyserSymbolCreateInfo
+{
+    U16             Scope;
+    HC_Token        SymbolToken;
+    HC_Token        PreviousToken;
+} HC_SyntaxAnalyserSymbolCreateInfo;
+
 typedef struct HC_SyntaxAnalyserSymbol
 {
     U64         ReferenceHash;
+    U64         TypeHash;
 } HC_SyntaxAnalyserSymbol;
 
 typedef struct HC_SyntaxAnalyserSymbolTable
@@ -51,7 +59,7 @@ typedef struct HC_SyntaxAnalyserCreateInfo
 } HC_SyntaxAnalyserCreateInfo;
 
 extern U8 HC_SyntaxAnalyserCreate(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserCreateInfo *createInfo);
-extern U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_Token *current, U16 scope);
+extern U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserSymbolCreateInfo *info);
 extern U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser);
 extern U8 HC_SyntaxAnalyserDestroy(HC_SyntaxAnalyser *analyser);
 

@@ -13,9 +13,9 @@ typedef struct HC_SyntaxAnalyserExpressionCreateInfo
     U16 Scope;
 } HC_SyntaxAnalyserExpressionCreateInfo;
 
-static inline U0 HC_QuickSort(U16 *numbers, const U16 first, const U16 last)
+static inline U0 HC_QuickSort(U64 *numbers, const U64 first, const U64 last)
 {
-    U16 i, j, pivot, temp;
+    U64 i, j, pivot, temp;
     if (0 < last)
     {
         pivot = first;
@@ -48,28 +48,37 @@ static inline U0 HC_QuickSort(U16 *numbers, const U16 first, const U16 last)
         HC_QuickSort(numbers, j + 1, last);
     }
 }
-static inline I64 HC_BinarySearch(U64 *hashes, U32 low, U32 high, U64 searching)
+static inline I64 HC_BinarySearchHash(HC_SyntaxAnalyserSymbol *symbols, U64 low, U64 high, U64 searching)
 {
+    printf("%lu %lu %lu\n", low, high, searching);
     if (low <= high)
 	{
-		U32 mid = low + (high - low) / 2;
-		if (searching == hashes[mid])
+		U64 mid = low + (high - low) / 2;
+		if (searching == symbols[mid].ReferenceHash)
 			return mid;
 		
-        else if (searching < hashes[mid])
-			return HC_BinarySearch(hashes, low, mid - 1, searching);
+        else if (searching < symbols[mid].ReferenceHash)
+			return HC_BinarySearchHash(symbols, low, mid - 1, searching);
 		
         else
-			return HC_BinarySearch(hashes, mid + 1, high, searching);
+			return HC_BinarySearchHash(symbols, mid + 1, high, searching);
 	}
 	return -1;
 }
 static U8 HC_SyntaxAnalyserCheckRepeatedSymbol(HC_SyntaxAnalyser *analyser, U16 scope, U64 hash)
 {
     HC_SyntaxAnalyserSymbolTable *t = &analyser->SymbolTables[scope - 1];
-    U64 hashes[t->Count];
-    memcpy(hashes, t->Symbols, sizeof(HC_SyntaxAnalyserSymbol) * t->Count);
-    return (HC_BinarySearch(hashes, 0, t->Count, hash) != -1);
+    switch (t->Count)
+    {
+        case 0:
+            return HC_False;
+        case 1:
+            return (t->Symbols[0].ReferenceHash == hash);
+        default:
+            return (HC_BinarySearchHash(t->Symbols, 0, t->Count, hash) != -1);
+    }
+    
+    return 1;
 }
 static U8 HC_SyntaxAnalyserCheckBuiltInType(const U64 hash)
 {
@@ -93,7 +102,7 @@ static U8 HC_SyntaxAnalyserCheckBuiltInType(const U64 hash)
 static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
 {
     HC_Token *indexer = &analyser->Analysing[info->Offset + 0];
-    
+
     /* Check built in type */
     if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash))
     {
@@ -102,7 +111,8 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
             printf("Invalid syntax [line %d]: Expected expression after %s\n", indexer->Line, indexer->Source);
             return HC_False;
         }
-        
+
+        HC_Token type = *indexer;
         indexer++;
         
         /* Check repetition */
@@ -113,10 +123,9 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
         }
         else
         {
-            printf("New symbol added: of %s with type %s\n", indexer->Source, analyser->Analysing[info->Offset].Source);
-            /* Add to symbol table and validate no others in outwards scopes */
+            printf("New symbol added [line %d]: %s %s\n", indexer->Line, type.Source, indexer->Source);
+            HC_SyntaxAnalyserAddSymbol(analyser, &(HC_SyntaxAnalyserSymbolCreateInfo) { .SymbolToken = *indexer, .SymbolToken = type, .Scope = info->Scope } );
         }
-
     }
     /* Not built in type (referencing old symbol) */
     else
@@ -126,8 +135,16 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
     
     return HC_True;
 }
-U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_Token *current, U16 scope)
+U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserSymbolCreateInfo *info)
 {
+    HC_SyntaxAnalyserSymbol s;
+    HC_SyntaxAnalyserSymbolTable *t = &analyser->SymbolTables[info->Scope];
+    s.ReferenceHash = info->SymbolToken.Hash;
+    s.TypeHash      = info->PreviousToken.Hash;
+    analyser->SymbolTables[info->Scope].Symbols = realloc(analyser->SymbolTables[info->Scope].Symbols, sizeof(HC_SyntaxAnalyserSymbol) * (t->Count + 1));
+    memcpy(&t->Symbols[t->Count], &s, sizeof(HC_SyntaxAnalyserSymbol));
+    
+    t->Count++;
     return HC_True;
 }
 
@@ -203,7 +220,7 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
             {
                 if (scope == 0)
                 {
-                    printf("Syntax error [line %d]: trying to dereference scope, %s detected\n", current->Line, current->Source);
+                    printf("Syntax error [line %d]: trying to dereference scope further than allowed\n", current->Line);
                     printf("Failed to analyse %s\n", analyser->StreamName);
                     return HC_False;
                 }
