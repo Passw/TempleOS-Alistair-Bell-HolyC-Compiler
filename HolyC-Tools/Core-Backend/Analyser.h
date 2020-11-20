@@ -3,24 +3,46 @@
 
 #include "Common.h"
 #include "Tokens.h"
-#include "Errors.h"
 #include "Stream.h"
 #include "Lexer.h"
 
-typedef struct HC_Lexer HC_Lexer;
+/* 
+    Scopes
+
+    U64 i = 10; 0 
+
+    { 1
+        { 2
+
+            { 3
+
+            } 3
+        } 2
+    } 1
+
+*/
+
+#define HC_ANALYSER_GLOBAL_SCOPE_REFERENCE 0 /* the largest smallest will be the value for global scopes */
 
 typedef struct HC_SyntaxAnalyserSymbol
 {
-    
+    U64         ReferenceHash;
 } HC_SyntaxAnalyserSymbol;
+
+typedef struct HC_SyntaxAnalyserSymbolTable
+{
+    U16                         Scope;
+    U32                         Count;
+    HC_SyntaxAnalyserSymbol     *Symbols;
+} HC_SyntaxAnalyserSymbolTable;
 
 typedef struct HC_SyntaxAnalyser
 {
-    const I8    *StreamName;
-    HC_Token    *Analysing;
-    HC_Error    *Errors;
-    U64         AnalysingCount;
-    U64         ErrorCount;
+    const I8                       *StreamName;
+    HC_Token                       *Analysing;
+    HC_SyntaxAnalyserSymbolTable   *SymbolTables;
+    U16                             TableCount;
+    U64                             AnalysingCount;
 } HC_SyntaxAnalyser;
 
 typedef struct HC_SyntaxAnalyserCreateInfo
@@ -29,6 +51,7 @@ typedef struct HC_SyntaxAnalyserCreateInfo
 } HC_SyntaxAnalyserCreateInfo;
 
 extern U8 HC_SyntaxAnalyserCreate(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserCreateInfo *createInfo);
+extern U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_Token *current, U16 scope);
 extern U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser);
 extern U8 HC_SyntaxAnalyserDestroy(HC_SyntaxAnalyser *analyser);
 

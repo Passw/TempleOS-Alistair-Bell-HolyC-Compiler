@@ -31,7 +31,7 @@ static const I8 *HC_CompilerParseArguments(const U32 argumentCount, const I8 **a
     if (argumentCount <= 1)
     {
         printf("No arguments specified\n");
-        return "Tests/Main.HC";
+        return NULL;
     }
     const I8 *file = arguments[1];
     if (!HC_CompilerValidateFile(file))
