@@ -141,7 +141,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     U8 stringMode   = HC_False;
     U8 commentMode  = HC_False;
 
-    U32 newLine = 0;
+    U32 newLine = 1;
     
     HC_Token tokens[HC_LEXER_TOKEN_ROUND_COUNT]; /* all the tokens found */
     memset(tokens, 0, sizeof(HC_Token) * HC_LEXER_TOKEN_ROUND_COUNT); 

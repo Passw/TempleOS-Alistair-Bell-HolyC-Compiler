@@ -6,4 +6,6 @@ cd ../
 
 ./Build/HolyC-Tools/Tests/Test-Tests
 ./Build/HolyC-Tools/Tests/Test-Tokens
+./Build/HolyC-Tools/Tests/Test-Parsing
 ./Build/HolyC-Tools/Tests/Test-HelloWorld
+

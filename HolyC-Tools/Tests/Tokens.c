@@ -31,6 +31,12 @@ static U8 TokenComment(U0 *data)
     HC_LexerParse(&l);
     U64 i;
     HC_Token *t;
+    if (l.CurrentFile->TokenCount != 11)
+    {
+        /* Too many tokens */
+        printf("Too many tokens present!\n");
+        return HC_False;
+    }
     for (i = 0; i < l.CurrentFile->TokenCount; i++)
     {
         t = &l.CurrentFile->Tokens[i];
