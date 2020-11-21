@@ -1,6 +1,6 @@
 project(Core-Backend)
 
-set(SDK_SOURCES
+set(BACKEND_SOURCES
     Common.h
     SDK.h
 
@@ -10,7 +10,8 @@ set(SDK_SOURCES
     Lexer.h
     Lexer.c
     
-    Tokens.h
+    Errors.h
+    Errors.c
 
     Analyser.h
     Analyser.c
@@ -23,4 +24,4 @@ set(SDK_SOURCES
 )
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror") # With any legacy api the syntax is terrible, holyc is divine and clean
-add_library(${PROJECT_NAME} STATIC ${SDK_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${BACKEND_SOURCES})

@@ -5,6 +5,7 @@
 #include "Tokens.h"
 #include "Stream.h"
 #include "Lexer.h"
+#include "Errors.h"
 
 /* 
     Scopes

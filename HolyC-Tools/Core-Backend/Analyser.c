@@ -22,7 +22,6 @@ static inline U0 HC_QuickSort(U64 *numbers, const U64 first, const U64 last)
         i     = first;
         j     = last;
         
-
         while (i < j)
         {
             while (numbers[i] <= numbers[pivot]&& i < last)
@@ -98,42 +97,101 @@ static U8 HC_SyntaxAnalyserCheckBuiltInType(const U64 hash)
     }
     return HC_False;
 }
+static U8 HC_SyntaxAnalyserUnderstandMethod(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
+{   
+    U64 i = 0;
+    
+    if (info->Count == 0)
+        return HC_False;
+    
+    HC_Token *t = &analyser->Analysing[info->Offset + i];
+    while (i < info->Count)
+    {
+        printf("%s\n", t->Source);
+        
+        
+        /* Incrimenter */
+        t++;
+        i++;
+    }
+    
+
+    return HC_True;
+}
+
 
 static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
 {
-    HC_Token *indexer = &analyser->Analysing[info->Offset + 0];
+    HC_Token *indexer = &analyser->Analysing[info->Offset];
+    HC_Token type;
 
     /* Check built in type */
     if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash))
     {
         if (info->Count == 1)
-        {
-            printf("Invalid syntax [line %d]: Expected expression after %s\n", indexer->Line, indexer->Source);
-            return HC_False;
-        }
+            goto expectedExpression;
 
-        HC_Token type = *indexer;
+        type = *indexer;
         indexer++;
-        
+
         /* Check repetition */
         if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash) || HC_SyntaxAnalyserCheckRepeatedSymbol(analyser, info->Scope, indexer->Hash))
         {
-            printf("Invalid syntax [line %d]: Repetition of type or symbol declaration %s\n", indexer->Line, indexer->Source);
-            return HC_False;
+            return (HC_ErrorRedefinedSymbol(&(HC_ErrorCreateInfo) { .Causation = indexer, .Scope = info->Scope }));
         }
         else
         {
-            printf("New symbol added [line %d]: %s %s\n", indexer->Line, type.Source, indexer->Source);
             HC_SyntaxAnalyserAddSymbol(analyser, &(HC_SyntaxAnalyserSymbolCreateInfo) { .SymbolToken = *indexer, .SymbolToken = type, .Scope = info->Scope } );
+            //HC_Token name = *indexer;
+
+            if (2 < info->Count)
+            {
+                indexer++;
+                switch (indexer->Hash)
+                {
+                    /* Assignment declaration */
+                    case HC_LEXICAL_TOKENS_EQUALS_STRING_HASH:
+                    {
+                        if (info->Count == 3)
+                            goto expectedExpression;
+                        indexer++;
+                        
+                        if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash))
+                            goto expectedExpression;
+                        break;
+                    }
+                    case HC_LEXICAL_TOKENS_LEFT_PARAM_STRING_HASH:
+                    {
+                        HC_SyntaxAnalyserExpressionCreateInfo ci;
+                        ci.Offset = info->Offset + 3;
+                        ci.Count  = info->Count - 3;
+                        HC_SyntaxAnalyserUnderstandMethod(analyser, &ci);
+                        break;
+                    }
+
+                    default:
+                       goto expectedExpression;
+                }
+            }
+            else
+            {
+                goto end;
+            }
+
         }
     }
-    /* Not built in type (referencing old symbol) */
-    else
+
+    goto end;
+
+
+    expectedExpression:
     {
-        
+        return (HC_ErrorExpectedExpression(&(HC_ErrorCreateInfo) { .Causation = indexer, .Scope = info->Scope }));
     }
-    
-    return HC_True;
+
+
+    end:
+        return HC_True;
 }
 U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserSymbolCreateInfo *info)
 {
@@ -203,10 +261,8 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
                 ci.Offset = leftPnsr;
                 ci.Scope  = scope;
                 if (HC_SyntaxAnalyserCreateExpressions(analyser, &ci) == HC_False)
-                {
-                    printf("Failed to analyse %s\n", analyser->StreamName);
                     return HC_False;
-                }
+
                 leftPnsr = rightPnsr + 1; /* ignore next semi colon */
                 break;
             }
@@ -219,11 +275,8 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
             case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET:
             {
                 if (scope == 0)
-                {
-                    printf("Syntax error [line %d]: trying to dereference scope further than allowed\n", current->Line);
-                    printf("Failed to analyse %s\n", analyser->StreamName);
-                    return HC_False;
-                }
+                    return (HC_ErrorDereferencedLowestScope(&(HC_ErrorCreateInfo) { .Line = current->Line }));
+                
                 analyser->SymbolTables = realloc(analyser->SymbolTables, sizeof(HC_SyntaxAnalyserSymbolTable) * (scope + 1));
                 scope--;
                 break;

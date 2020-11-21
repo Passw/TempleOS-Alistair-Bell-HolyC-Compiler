@@ -18,7 +18,11 @@ U8 HC_CompilerRun(HC_Compiler *compiler)
             return HC_False;
     }
     HC_SyntaxAnalyserCreate(&compiler->Analyser, &(HC_SyntaxAnalyserCreateInfo) { .Lexer = &compiler->Lexer });
-    HC_SyntaxAnalyserAnalyse(&compiler->Analyser);
+    if (!HC_SyntaxAnalyserAnalyse(&compiler->Analyser))
+    {
+        printf("Failed to analyse %s\n", compiler->Lexer.CurrentFile->FileName);
+        return HC_False;
+    }
     return HC_True;
 }
 U8 HC_CompilerDestroy(HC_Compiler *compiler)
