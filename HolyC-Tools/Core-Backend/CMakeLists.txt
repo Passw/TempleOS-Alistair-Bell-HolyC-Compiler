@@ -1,6 +1,6 @@
 project(Core-Backend)
 
-set(BACKEND_SOURCES
+set(BACKEND_SOURCES SHARED
     Common.h
     SDK.h
 
