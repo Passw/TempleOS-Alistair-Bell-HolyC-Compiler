@@ -13,6 +13,14 @@ typedef struct HC_SyntaxAnalyserExpressionCreateInfo
     U16 Scope;
 } HC_SyntaxAnalyserExpressionCreateInfo;
 
+typedef struct HC_SyntaxAnalyserUnderstandMethodCreateInfo
+{
+    U64 *Offset;
+    U64 Count;
+    U16 Scope;
+} HC_SyntaxAnalyserUnderstandMethodCreateInfo;
+
+/*
 static inline U0 HC_QuickSort(U64 *numbers, const U64 first, const U64 last)
 {
     U64 i, j, pivot, temp;
@@ -27,10 +35,10 @@ static inline U0 HC_QuickSort(U64 *numbers, const U64 first, const U64 last)
             while (numbers[i] <= numbers[pivot]&& i < last)
             {
                 i++;
-                while(numbers[j] > numbers[pivot])
+                while (numbers[j] > numbers[pivot])
                 {
                     j--;
-                    if(i < j)
+                    if (i < j)
                     {
                         temp       = numbers[i];
                         numbers[i] = numbers[j];
@@ -77,118 +85,43 @@ static U8 HC_SyntaxAnalyserCheckRepeatedSymbol(HC_SyntaxAnalyser *analyser, U16 
             return (HC_BinarySearchHash(t->Symbols, 0, t->Count, hash) != -1);
     }
     
-    return 1;
+    return HC_False;
 }
 static U8 HC_SyntaxAnalyserCheckBuiltInType(const U64 hash)
 {
     switch (hash)
     {
-        case HC_LEXICAL_TOKENS_U0_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_I8_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_U8_STRING_HASH: return HC_True;
+        case HC_LEXICAL_TOKENS_U0_STRING_HASH:  return HC_True;
+        case HC_LEXICAL_TOKENS_I8_STRING_HASH:  return HC_True;
+        case HC_LEXICAL_TOKENS_U8_STRING_HASH:  return HC_True;
         case HC_LEXICAL_TOKENS_I16_STRING_HASH: return HC_True;
         case HC_LEXICAL_TOKENS_U16_STRING_HASH: return HC_True;
         case HC_LEXICAL_TOKENS_I32_STRING_HASH: return HC_True;
         case HC_LEXICAL_TOKENS_U32_STRING_HASH: return HC_True;
         case HC_LEXICAL_TOKENS_I64_STRING_HASH: return HC_True;
         case HC_LEXICAL_TOKENS_U64_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_F32_STRING_HASH: return HC_True;
+        case HC_LEXICAL_TOKENS_F32_STRING_HASH: return HC_True; // F32 is for heretics :)
         case HC_LEXICAL_TOKENS_F64_STRING_HASH: return HC_True;
     }
     return HC_False;
 }
-static U8 HC_SyntaxAnalyserUnderstandMethod(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
-{   
-    U64 i = 0;
-    
-    if (info->Count == 0)
-        return HC_False;
-    
-    HC_Token *t = &analyser->Analysing[info->Offset + i];
-    while (i < info->Count)
-    {
-        printf("%s\n", t->Source);
-        
-        
-        /* Incrimenter */
-        t++;
-        i++;
-    }
-    
-
-    return HC_True;
-}
-
-
+*/
 static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
 {
-    HC_Token *indexer = &analyser->Analysing[info->Offset];
-    HC_Token type;
-
-    /* Check built in type */
-    if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash))
+    HC_Token *iterator = &analyser->Analysing[info->Offset];
+    switch (info->Count)
     {
-        if (info->Count == 1)
-            goto expectedExpression;
-
-        type = *indexer;
-        indexer++;
-
-        /* Check repetition */
-        if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash) || HC_SyntaxAnalyserCheckRepeatedSymbol(analyser, info->Scope, indexer->Hash))
-        {
-            return (HC_ErrorRedefinedSymbol(&(HC_ErrorCreateInfo) { .Causation = indexer, .Scope = info->Scope }));
-        }
-        else
-        {
-            HC_SyntaxAnalyserAddSymbol(analyser, &(HC_SyntaxAnalyserSymbolCreateInfo) { .SymbolToken = *indexer, .SymbolToken = type, .Scope = info->Scope } );
-            //HC_Token name = *indexer;
-
-            if (2 < info->Count)
-            {
-                indexer++;
-                switch (indexer->Hash)
-                {
-                    /* Assignment declaration */
-                    case HC_LEXICAL_TOKENS_EQUALS_STRING_HASH:
-                    {
-                        if (info->Count == 3)
-                            goto expectedExpression;
-                        indexer++;
-                        
-                        if (HC_SyntaxAnalyserCheckBuiltInType(indexer->Hash))
-                            goto expectedExpression;
-                        break;
-                    }
-                    case HC_LEXICAL_TOKENS_LEFT_PARAM_STRING_HASH:
-                    {
-                        HC_SyntaxAnalyserExpressionCreateInfo ci;
-                        ci.Offset = info->Offset + 3;
-                        ci.Count  = info->Count - 3;
-                        HC_SyntaxAnalyserUnderstandMethod(analyser, &ci);
-                        break;
-                    }
-
-                    default:
-                       goto expectedExpression;
-                }
-            }
-            else
-            {
-                goto end;
-            }
-
-        }
+        case 0: goto expectedExpression; break;
+        case 1: goto expectedExpression; break;
     }
 
+    
     goto end;
 
 
-    expectedExpression:
-    {
-        return (HC_ErrorExpectedExpression(&(HC_ErrorCreateInfo) { .Causation = indexer, .Scope = info->Scope }));
-    }
 
+    expectedExpression:
+        return HC_ErrorExpectedExpression(&(HC_ErrorCreateInfo) { .Causation = iterator, .Line = iterator->Line, .Scope = info->Scope });
 
     end:
         return HC_True;
@@ -252,31 +185,33 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
     {
         rightPnsr = i;
         HC_Token *current = &analyser->Analysing[i];
-        switch (current->Token)
+        switch (current->Hash)
         {
-            case HC_LEXICAL_TOKENS_SEMI_COLON:
+            case HC_LEXICAL_TOKENS_SEMI_COLON_STRING_HASH:
             {
                 HC_SyntaxAnalyserExpressionCreateInfo ci;
                 ci.Count  = (rightPnsr - leftPnsr);
                 ci.Offset = leftPnsr;
                 ci.Scope  = scope;
-                if (HC_SyntaxAnalyserCreateExpressions(analyser, &ci) == HC_False)
+                if (!HC_SyntaxAnalyserCreateExpressions(analyser, &ci))
                     return HC_False;
 
                 leftPnsr = rightPnsr + 1; /* ignore next semi colon */
                 break;
             }
-            case HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET:
+            case HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH:
             {
-                analyser->SymbolTables = realloc(analyser->SymbolTables, sizeof(HC_SyntaxAnalyserSymbolTable) * (scope + 1));
                 scope++;
+                analyser->SymbolTables = realloc(analyser->SymbolTables, sizeof(HC_SyntaxAnalyserSymbolTable) * (scope + 1));
+                analyser->SymbolTables[scope].Symbols = calloc(0, sizeof(HC_SyntaxAnalyserSymbol));
                 break;
             }
-            case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET:
+            case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
             {
                 if (scope == 0)
                     return (HC_ErrorDereferencedLowestScope(&(HC_ErrorCreateInfo) { .Line = current->Line }));
                 
+                free(analyser->SymbolTables[scope].Symbols);
                 analyser->SymbolTables = realloc(analyser->SymbolTables, sizeof(HC_SyntaxAnalyserSymbolTable) * (scope + 1));
                 scope--;
                 break;

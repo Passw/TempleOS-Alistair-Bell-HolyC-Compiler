@@ -6,12 +6,41 @@
 inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar, U32 *newLine)
 {
     *newLine += (currentChar == '\n');
+    
+    switch (currentChar)
+    {
+        /* 
+            All the following are ascii values
+            See http://www.asciitable.com/ 
+            We use ascii not unicode 
+            The orginal OS used 8 bit unsigned ascii as Terry was against 7 bit signed
+            The lexer treats all chars as ascii but using unicode can cause unwanted effects
+        */
+
+        case 10:  return HC_True;  /* \n */
+        case 32:  return HC_True;  /*  */
+        case 34:  return HC_True;  /* " */
+        case 39:  return HC_True;  /* ' */
+        case 40:  return HC_True;  /* ( */
+        case 41:  return HC_True;  /* ) */
+        case 44:  return HC_True;  /* , */
+        case 46:  return HC_True;  /* . */
+        case 59:  return HC_True;  /* ; */
+        case 91:  return HC_True;  /* [ */
+        case 93:  return HC_True;  /* ] */
+        case 123: return HC_True;  /* { */
+        case 125: return HC_True;  /* } */
+        default:  return HC_False; /* any other char */
+
+    }
+    
+    
     return currentChar == '\n'
         || currentChar == ' ' 
         || currentChar == '(' 
         || currentChar == ')' 
-        || currentChar == '}' 
-        || currentChar == '{'
+        || currentChar == '{' 
+        || currentChar == '}'
         || currentChar == '['
         || currentChar == ']'
         || currentChar == ';'
@@ -46,22 +75,22 @@ static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMod
 
     HC_LexerAddToken(l, &t, lt, lineCount, src, count);
     
-    switch (t.Token)
+    switch (t.Hash)
     {
-        case HC_LEXICAL_TOKENS_STARTING_COMMENT:
+        case HC_LEXICAL_TOKENS_STARTING_COMMENT_STRING_HASH:
             *commentMode = HC_True;
             break;
-        case HC_LEXICAL_TOKENS_ENDING_COMMENT:
+        case HC_LEXICAL_TOKENS_ENDING_COMMENT_STRING_HASH:
             *commentMode = HC_False;
             break;
-        case HC_LEXICAL_TOKENS_SINGLE_QUOTE:
+        case HC_LEXICAL_TOKENS_DOUBLE_QUOTE_STRING_HASH:
         {
             *strMode = 1 - (*strMode);
             if (!(*commentMode))
                 goto addToken;
         }
 
-        case HC_LEXICAL_TOKENS_DOUBLE_QUOTE:
+        case HC_LEXICAL_TOKENS_SINGLE_QUOTE_STRING_HASH:
             *strMode = 1 - (*strMode);
             if (!(*commentMode))
                 goto addToken;

@@ -9,40 +9,40 @@ static inline U64 HC_TokenDetermineSpecialChar(HC_Token *token, HC_Token *previo
     switch (token->Hash)
     {
         case HC_LEXICAL_TOKENS_SEMI_COLON_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_SEMI_COLON;
+            token->Token = HC_LEXICAL_TOKEN_SEPARATOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_PLUS_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_PLUS;
+            token->Token = HC_LEXICAL_TOKEN_OPERATOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_MINUS_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_MINUS;
+            token->Token = HC_LEXICAL_TOKEN_OPERATOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_MULTIPLY_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_MULTIPLY;
+            token->Token = HC_LEXICAL_TOKEN_OPERATOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_DIVIDE_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_DIVIDE;
+            token->Token = HC_LEXICAL_TOKEN_OPERATOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_EQUALS_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_DIVIDE;
+            token->Token = HC_LEXICAL_TOKEN_OPERATOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_LEFT_PARAM_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_LEFT_PARAM;
+            token->Token = HC_LEXICAL_TOKEN_SCOPER;
             return HC_True;
         case HC_LEXICAL_TOKENS_RIGHT_PARAM_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_RIGHT_PARAM;
+            token->Token = HC_LEXICAL_TOKEN_SCOPER;
             return HC_True;
         case HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET;
+            token->Token = HC_LEXICAL_TOKEN_SCOPER;
             return HC_True;
         case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET;
+            token->Token = HC_LEXICAL_TOKEN_SCOPER;
             return HC_True;
         case HC_LEXICAL_TOKENS_SINGLE_QUOTE_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_SINGLE_QUOTE;
+            token->Token = HC_LEXICAL_TOKEN_VALUE_PRECURSOR;
             return HC_True;
         case HC_LEXICAL_TOKENS_DOUBLE_QUOTE_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_DOUBLE_QUOTE;
+            token->Token = HC_LEXICAL_TOKEN_VALUE_PRECURSOR;
             return HC_True;
     }
     return HC_False;
@@ -52,56 +52,56 @@ static inline U8 HC_TokenDetermineType(HC_Token *token, HC_Token *previousToken)
     switch (token->Hash)
     {
         case HC_LEXICAL_TOKENS_STARTING_COMMENT_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_STARTING_COMMENT;
+            token->Token = HC_LEXICAL_TOKEN_UNRESOLVED;
             return HC_True;
         case HC_LEXICAL_TOKENS_ENDING_COMMENT_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_ENDING_COMMENT;
+            token->Token = HC_LEXICAL_TOKEN_UNRESOLVED;
             return HC_True;
         case HC_LEXICAL_TOKENS_FOR_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_FOR;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_WHILE_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_WHILE;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_U0_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_U0;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_I8_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_I8;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_U8_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_U8;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_I16_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_I16;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_U16_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_U16;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_I32_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_I32;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_U32_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_U32;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_I64_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_I64;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_U64_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_U64;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_F32_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_F32;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_F64_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKENS_F64;
+            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         default:
 
-            if (previousToken != NULL && (previousToken->Token == HC_LEXICAL_TOKENS_SINGLE_QUOTE || previousToken->Token == HC_LEXICAL_TOKENS_DOUBLE_QUOTE))
-                token->Token = HC_LEXICAL_TOKENS_VALUE; /* string value */
+            if (previousToken != NULL && (previousToken->Token == HC_LEXICAL_TOKEN_VALUE_PRECURSOR))
+                token->Token = HC_LEXICAL_TOKEN_VALUE; /* string value */
             else
-                token->Token = HC_LEXICAL_TOKENS_NEW_SYMBOL;
+                token->Token = HC_LEXICAL_TOKEN_SYMBOL;
             return HC_True;
     }
     return HC_True;

@@ -42,53 +42,15 @@ typedef struct HC_Lexer HC_Lexer;
 
 typedef enum HC_LexicalTokens
 {
-    HC_LEXICAL_TOKENS_SEMI_COLON,
-
-    /*
-        Operators
-    */  
-    HC_LEXICAL_TOKENS_PLUS,
-    HC_LEXICAL_TOKENS_MINUS,
-    HC_LEXICAL_TOKENS_MULTIPLY,
-    HC_LEXICAL_TOKENS_DIVIDE,
-    HC_LEXICAL_TOKENS_EQUALS,  
-
-    HC_LEXICAL_TOKENS_LEFT_PARAM,
-    HC_LEXICAL_TOKENS_RIGHT_PARAM,
-
-    HC_LEXICAL_TOKENS_LEFT_CURLY_BRACKET,
-    HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET,
-
-    HC_LEXICAL_TOKENS_STARTING_COMMENT,
-    HC_LEXICAL_TOKENS_ENDING_COMMENT,
-    
-    HC_LEXICAL_TOKENS_SINGLE_QUOTE,
-    HC_LEXICAL_TOKENS_DOUBLE_QUOTE,
-
-    HC_LEXICAL_TOKENS_VALUE,
-
-    HC_LEXICAL_TOKENS_NEW_SYMBOL,
-
-    /*
-        Keywords
-    */
-    HC_LEXICAL_TOKENS_FOR,
-    HC_LEXICAL_TOKENS_WHILE,
-
-    /* 
-        Predefined types
-    */
-    HC_LEXICAL_TOKENS_I8,
-    HC_LEXICAL_TOKENS_U0,
-    HC_LEXICAL_TOKENS_U8,
-    HC_LEXICAL_TOKENS_I16,
-    HC_LEXICAL_TOKENS_U16,
-    HC_LEXICAL_TOKENS_I32,
-    HC_LEXICAL_TOKENS_U32,
-    HC_LEXICAL_TOKENS_I64,
-    HC_LEXICAL_TOKENS_U64,
-    HC_LEXICAL_TOKENS_F32,
-    HC_LEXICAL_TOKENS_F64,
+    HC_LEXICAL_TOKEN_SYMBOL,          /* Variables methods, or data types: foo, bar, ptr, member_class, etc */
+    HC_LEXICAL_TOKEN_VALUE,           /* Aka literals: 10 'abc' "hello world\n" */
+    HC_LEXICAL_TOKEN_KEYWORD,         /* Keywords: I64, I32, U8, U0, while, etc */
+    HC_LEXICAL_TOKEN_OPERATOR,        /* Operators: + - / * = */
+    HC_LEXICAL_TOKEN_VALUE_PRECURSOR, /* Precursor: " ' eg: stuff that helps define a type */
+    HC_LEXICAL_TOKEN_SEPARATOR,       /* Seperators: ; eg: allows the parser to split streams into analyseable chunks */
+    HC_LEXICAL_TOKEN_INDEXERS,        /* Indexer: [ ] ( ) eg: scopers but not for stack or symbols */
+    HC_LEXICAL_TOKEN_SCOPER,          /* Stack reference scopers: { }*/
+    HC_LEXICAL_TOKEN_UNRESOLVED,      /* further analysis is required to understand its type */
 } HC_LexicalTokens;
 
 typedef struct HC_Token

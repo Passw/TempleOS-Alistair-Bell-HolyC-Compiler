@@ -1,1 +1,1 @@
-U8 method(U32 i);
+U8 method(U32 i, U32 j, U32 k, U32 l) { }

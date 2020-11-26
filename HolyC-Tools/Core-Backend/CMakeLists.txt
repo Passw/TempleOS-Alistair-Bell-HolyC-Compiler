@@ -23,5 +23,5 @@ set(BACKEND_SOURCES SHARED
     Tests.c
 )
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror") # With any legacy api the syntax is terrible, holyc is divine and clean
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror") # With any legacy api the syntax is terrible, holyc is divine and clean
 add_library(${PROJECT_NAME} STATIC ${BACKEND_SOURCES})
