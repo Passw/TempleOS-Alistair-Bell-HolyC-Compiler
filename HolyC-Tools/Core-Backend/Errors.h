@@ -12,8 +12,8 @@ typedef struct HC_ErrorCreateInfo
 } HC_ErrorCreateInfo;
 
 extern U8 HC_ErrorExpectedExpression(HC_ErrorCreateInfo *info);
+extern U8 HC_ErrorUnDereferencedTopScope(HC_ErrorCreateInfo *info);
 extern U8 HC_ErrorDereferencedLowestScope(HC_ErrorCreateInfo *info);
 extern U8 HC_ErrorRedefinedSymbol(HC_ErrorCreateInfo *info);
-
 
 #endif

@@ -1,11 +1,5 @@
 #include "Analyser.h"
 
-/*
-    All warnings and errors are treated as fatal
-    Good code has no warnings, its the programers problem to fix the warnings
-    Its lazy to ignore warnings, that is why cmake uses -Wfatal
-*/
-
 typedef struct HC_SyntaxAnalyserExpressionCreateInfo
 {
     U64 Offset;
@@ -13,99 +7,50 @@ typedef struct HC_SyntaxAnalyserExpressionCreateInfo
     U16 Scope;
 } HC_SyntaxAnalyserExpressionCreateInfo;
 
-typedef struct HC_SyntaxAnalyserUnderstandMethodCreateInfo
+typedef struct HC_SyntaxAnalyserValidateNextTokenInfo
 {
-    U64 *Offset;
-    U64 Count;
-    U16 Scope;
-} HC_SyntaxAnalyserUnderstandMethodCreateInfo;
+    HC_Token    *Current;
+    HC_Token    *Next;
+    U64         StatusFlags;
+} HC_SyntaxAnalyserValidateNextTokenInfo;
 
-/*
-static inline U0 HC_QuickSort(U64 *numbers, const U64 first, const U64 last)
+typedef enum HC_SyntaxAnalyserStepThroughFlags
 {
-    U64 i, j, pivot, temp;
-    if (0 < last)
+    HC_SYNTAX_ANALYSER_STEP_THROUGH_FLAGS_PREVIOUS_TYPE_DECLARATION     = 0x1,
+    HC_SYNTAX_ANALYSER_STEP_THROUGH_FLAGS_PREVIOUS_SYMBOL_REFERENCE     = 0x2,
+    HC_SYNTAX_ANALYSER_STEP_THROUGH_FLAGS_PREVIOUS_KEYWORD_REFERENCE    = 0x4,
+    HC_SYNTAX_ANALYSER_STEP_THROUGH_FLAGS_STARTING_METHOD_DECLARATION   = 0x8,
+} HC_SyntaxAnalyserStepThroughFlags;
+
+static inline U8 HC_SyntaxAnalyserValidateNextToken(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserValidateNextTokenInfo *info)
+{
+    HC_Token *errorRef = info->Current;
+
+    switch (info->Current->Token)
     {
-        pivot = first;
-        i     = first;
-        j     = last;
-        
-        while (i < j)
+        case HC_LEXICAL_TOKEN_TYPES:
         {
-            while (numbers[i] <= numbers[pivot]&& i < last)
+            if (info->Next != NULL && info->Next->Token == HC_LEXICAL_TOKEN_TYPES)
             {
-                i++;
-                while (numbers[j] > numbers[pivot])
-                {
-                    j--;
-                    if (i < j)
-                    {
-                        temp       = numbers[i];
-                        numbers[i] = numbers[j];
-                        numbers[j] = temp;
-                    }
-                }
+                errorRef = info->Next;
+                goto expectedExpression;
             }
         }
-
-        temp            = numbers[pivot];
-        numbers[pivot]  = numbers[j];
-        numbers[j]      = temp;
-        HC_QuickSort(numbers, first, j - 1);
-        HC_QuickSort(numbers, j + 1, last);
-    }
-}
-static inline I64 HC_BinarySearchHash(HC_SyntaxAnalyserSymbol *symbols, U64 low, U64 high, U64 searching)
-{
-    printf("%lu %lu %lu\n", low, high, searching);
-    if (low <= high)
-	{
-		U64 mid = low + (high - low) / 2;
-		if (searching == symbols[mid].ReferenceHash)
-			return mid;
-		
-        else if (searching < symbols[mid].ReferenceHash)
-			return HC_BinarySearchHash(symbols, low, mid - 1, searching);
-		
-        else
-			return HC_BinarySearchHash(symbols, mid + 1, high, searching);
-	}
-	return -1;
-}
-static U8 HC_SyntaxAnalyserCheckRepeatedSymbol(HC_SyntaxAnalyser *analyser, U16 scope, U64 hash)
-{
-    HC_SyntaxAnalyserSymbolTable *t = &analyser->SymbolTables[scope - 1];
-    switch (t->Count)
-    {
-        case 0:
-            return HC_False;
-        case 1:
-            return (t->Symbols[0].ReferenceHash == hash);
         default:
-            return (HC_BinarySearchHash(t->Symbols, 0, t->Count, hash) != -1);
+        {
+            break;
+        }
+
     }
-    
-    return HC_False;
+
+    return HC_True;
+
+
+    expectedExpression:
+        return HC_ErrorExpectedExpression(&(HC_ErrorCreateInfo) { .Causation = errorRef, .Line = errorRef->Line });
 }
-static U8 HC_SyntaxAnalyserCheckBuiltInType(const U64 hash)
-{
-    switch (hash)
-    {
-        case HC_LEXICAL_TOKENS_U0_STRING_HASH:  return HC_True;
-        case HC_LEXICAL_TOKENS_I8_STRING_HASH:  return HC_True;
-        case HC_LEXICAL_TOKENS_U8_STRING_HASH:  return HC_True;
-        case HC_LEXICAL_TOKENS_I16_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_U16_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_I32_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_U32_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_I64_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_U64_STRING_HASH: return HC_True;
-        case HC_LEXICAL_TOKENS_F32_STRING_HASH: return HC_True; // F32 is for heretics :)
-        case HC_LEXICAL_TOKENS_F64_STRING_HASH: return HC_True;
-    }
-    return HC_False;
-}
-*/
+
+
 static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
 {
     HC_Token *iterator = &analyser->Analysing[info->Offset];
@@ -114,11 +59,49 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
         case 0: goto expectedExpression; break;
         case 1: goto expectedExpression; break;
     }
-
     
+    U64 i;
+    U64 stepThroughFlags = 0;
+
+    for (i = 0; i < info->Count; i++)
+    {
+        switch (iterator->Token)
+        {
+            case HC_LEXICAL_TOKEN_TYPES:
+            {
+                stepThroughFlags |= HC_SYNTAX_ANALYSER_STEP_THROUGH_FLAGS_PREVIOUS_TYPE_DECLARATION;
+                break;
+            }
+            case HC_LEXICAL_TOKEN_KEYWORD:
+            {
+                stepThroughFlags |= HC_SYNTAX_ANALYSER_STEP_THROUGH_FLAGS_PREVIOUS_KEYWORD_REFERENCE;
+                break;
+            }
+            case HC_LEXICAL_TOKEN_UNRESOLVED:
+            {
+
+            }
+            default:
+            {
+                break;
+            }
+
+        }
+
+        HC_SyntaxAnalyserValidateNextTokenInfo vinfo;
+        memset(&vinfo, 0, sizeof(HC_SyntaxAnalyserValidateNextTokenInfo));
+        vinfo.Current            = iterator;
+        vinfo.StatusFlags        = stepThroughFlags;
+
+        if (i < (info->Count - 1))
+            vinfo.Next          = &analyser->Analysing[info->Offset + (i + 1)];
+
+        if (!HC_SyntaxAnalyserValidateNextToken(analyser, &vinfo))
+            return HC_False;
+        iterator++;
+    }
+
     goto end;
-
-
 
     expectedExpression:
         return HC_ErrorExpectedExpression(&(HC_ErrorCreateInfo) { .Causation = iterator, .Line = iterator->Line, .Scope = info->Scope });
@@ -138,8 +121,6 @@ U8 HC_SyntaxAnalyserAddSymbol(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserSymb
     t->Count++;
     return HC_True;
 }
-
-
 
 U8 HC_SyntaxAnalyserCreate(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserCreateInfo *createInfo)
 {
@@ -176,11 +157,12 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
         return HC_False;
     }
     
-    U64 i         = 0;
-    U64 leftPnsr  = 0;
-    U64 rightPnsr = 0;
-    U16 scope     = 0;
-
+    U64 i                       = 0;
+    U64 leftPnsr                = 0;
+    U64 rightPnsr               = 0;
+    U16 scope                   = 0;
+    HC_Token *lastNewScope      = NULL;
+    
     while (HC_True)
     {
         rightPnsr = i;
@@ -204,12 +186,13 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
                 scope++;
                 analyser->SymbolTables = realloc(analyser->SymbolTables, sizeof(HC_SyntaxAnalyserSymbolTable) * (scope + 1));
                 analyser->SymbolTables[scope].Symbols = calloc(0, sizeof(HC_SyntaxAnalyserSymbol));
+                lastNewScope = &analyser->Analysing[i];
                 break;
             }
             case HC_LEXICAL_TOKENS_RIGHT_CURLY_BRACKET_STRING_HASH:
             {
                 if (scope == 0)
-                    return (HC_ErrorDereferencedLowestScope(&(HC_ErrorCreateInfo) { .Line = current->Line }));
+                    return (HC_ErrorDereferencedLowestScope(&(HC_ErrorCreateInfo) { .Line = (U64)current->Line }));
                 
                 free(analyser->SymbolTables[scope].Symbols);
                 analyser->SymbolTables = realloc(analyser->SymbolTables, sizeof(HC_SyntaxAnalyserSymbolTable) * (scope + 1));
@@ -229,6 +212,9 @@ U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)
         }
 
     }
+
+    if (0 < scope)
+        return HC_ErrorUnDereferencedTopScope(&(HC_ErrorCreateInfo) { .Scope = scope, .Causation = lastNewScope });
 
     return HC_True;
 }

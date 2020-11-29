@@ -42,9 +42,10 @@ typedef struct HC_Lexer HC_Lexer;
 
 typedef enum HC_LexicalTokens
 {
-    HC_LEXICAL_TOKEN_SYMBOL,          /* Variables methods, or data types: foo, bar, ptr, member_class, etc */
+    HC_LEXICAL_TOKEN_SYMBOL,          /* Variables or methods: foo(), bar(), *ptr, member_class, etc */
     HC_LEXICAL_TOKEN_VALUE,           /* Aka literals: 10 'abc' "hello world\n" */
-    HC_LEXICAL_TOKEN_KEYWORD,         /* Keywords: I64, I32, U8, U0, while, etc */
+    HC_LEXICAL_TOKEN_TYPES,           /* Data types:  I64, I32, U8, U0, custom_type, U32, etc*/
+    HC_LEXICAL_TOKEN_KEYWORD,         /* Keywords: while, do, goto, etc */
     HC_LEXICAL_TOKEN_OPERATOR,        /* Operators: + - / * = */
     HC_LEXICAL_TOKEN_VALUE_PRECURSOR, /* Precursor: " ' eg: stuff that helps define a type */
     HC_LEXICAL_TOKEN_SEPARATOR,       /* Seperators: ; eg: allows the parser to split streams into analyseable chunks */

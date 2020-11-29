@@ -64,44 +64,40 @@ static inline U8 HC_TokenDetermineType(HC_Token *token, HC_Token *previousToken)
             token->Token = HC_LEXICAL_TOKEN_KEYWORD;
             return HC_True;
         case HC_LEXICAL_TOKENS_U0_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_I8_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_U8_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_I16_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_U16_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_I32_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_U32_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_I64_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_U64_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_F32_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         case HC_LEXICAL_TOKENS_F64_STRING_HASH:
-            token->Token = HC_LEXICAL_TOKEN_KEYWORD;
+            token->Token = HC_LEXICAL_TOKEN_TYPES;
             return HC_True;
         default:
-
-            if (previousToken != NULL && (previousToken->Token == HC_LEXICAL_TOKEN_VALUE_PRECURSOR))
-                token->Token = HC_LEXICAL_TOKEN_VALUE; /* string value */
-            else
-                token->Token = HC_LEXICAL_TOKEN_SYMBOL;
+            token->Token = HC_LEXICAL_TOKEN_UNRESOLVED;
             return HC_True;
     }
     return HC_True;
