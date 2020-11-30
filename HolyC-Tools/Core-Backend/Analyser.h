@@ -40,7 +40,6 @@ typedef struct HC_SyntaxAnalyserSymbol
 
 typedef struct HC_SyntaxAnalyserSymbolTable
 {
-    U16                         Scope;
     U32                         Count;
     HC_SyntaxAnalyserSymbol     *Symbols;
 } HC_SyntaxAnalyserSymbolTable;
@@ -50,8 +49,8 @@ typedef struct HC_SyntaxAnalyser
     const I8                       *StreamName;
     HC_Token                       *Analysing;
     HC_SyntaxAnalyserSymbolTable   *SymbolTables;
-    U16                             TableCount;
-    U64                             AnalysingCount;
+    U16                            TableCount;
+    U64                            AnalysingCount;
 } HC_SyntaxAnalyser;
 
 typedef struct HC_SyntaxAnalyserCreateInfo

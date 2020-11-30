@@ -35,6 +35,7 @@ static inline U8 HC_SyntaxAnalyserValidateNextToken(HC_SyntaxAnalyser *analyser,
                 errorRef = info->Next;
                 goto expectedExpression;
             }
+            break;
         }
         default:
         {
@@ -49,8 +50,6 @@ static inline U8 HC_SyntaxAnalyserValidateNextToken(HC_SyntaxAnalyser *analyser,
     expectedExpression:
         return HC_ErrorExpectedExpression(&(HC_ErrorCreateInfo) { .Causation = errorRef, .Line = errorRef->Line });
 }
-
-
 static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserExpressionCreateInfo *info)
 {
     HC_Token *iterator = &analyser->Analysing[info->Offset];
@@ -138,8 +137,7 @@ U8 HC_SyntaxAnalyserCreate(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserCreateI
     /* Global table */
     memset(&analyser->SymbolTables[0], 0, sizeof(HC_SyntaxAnalyserSymbolTable));
     analyser->SymbolTables[0].Symbols = calloc(0, sizeof(HC_SyntaxAnalyserSymbol));
-    analyser->SymbolTables[0].Scope   = 0; /* Universal global scope */
-
+    
     U64 tc = l->CurrentFile->TokenCount;
 
     analyser->Analysing = calloc(l->CurrentFile->TokenCount, sizeof(HC_Token));
