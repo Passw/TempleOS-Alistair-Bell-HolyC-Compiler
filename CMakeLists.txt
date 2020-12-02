@@ -22,6 +22,7 @@ add_subdirectory(HolyC-Tools/Compiler) # Compiler
 add_subdirectory(HolyC-Tools/Disassembler) # Dissasembler
 add_subdirectory(HolyC-Tools/Linker) # Linker
 add_subdirectory(HolyC-Tools/Core-Backend) # Interface library for common stuff
+add_subdirectory(HolyC-SDK) # Tools to write HolyC code :)
 
 if (PROJECT_BUILD_TESTS)
     add_subdirectory(HolyC-Tools/Tests)
