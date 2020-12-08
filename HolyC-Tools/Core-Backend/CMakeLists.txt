@@ -1,6 +1,6 @@
 project(Core-Backend)
 
-set(BACKEND_SOURCES SHARED
+set(BACKEND_SOURCES
     Common.h
     SDK.h
 
@@ -24,4 +24,4 @@ set(BACKEND_SOURCES SHARED
 )
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
-add_library(${PROJECT_NAME} STATIC ${BACKEND_SOURCES})
+add_library(${PROJECT_NAME} SHARED ${BACKEND_SOURCES})
