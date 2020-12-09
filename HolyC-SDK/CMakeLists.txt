@@ -17,11 +17,3 @@ endif(${PROJECT_TARGET_ARCHITECTURE} STREQUAL "amd64")
 add_library(HolyC-SDK-BaseLibrary ${BASE_LIBRARY_SOURCES})
 target_compile_options(HolyC-SDK-BaseLibrary PUBLIC "-O2")
 target_include_directories(HolyC-SDK-BaseLibrary PUBLIC Amd64)
-
-function(HolyC_Add_SDK_Test source binary)
-    add_executable(${binary} ${source})
-    target_link_libraries(${binary} PUBLIC HolyC-SDK-BaseLibrary)
-    target_link_libraries(${binary} PUBLIC Core-Backend)
-endfunction(HolyC_Add_SDK_Test source binary)
-
-HolyC_Add_SDK_Test(Tests/String.c Test-String)
