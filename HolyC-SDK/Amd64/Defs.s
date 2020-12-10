@@ -18,8 +18,8 @@
         Return methods are placed in the the accumulator
 */
 
+.global PutCharsSet /* const I8 *str, U64 len */
 .global PutChars
-
 
 .global StrNew
 .global StrLen

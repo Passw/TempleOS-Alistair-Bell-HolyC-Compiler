@@ -50,7 +50,7 @@ static U8 TokenComment(U0 *data)
     return HC_True;
 }
 
-U32 main()
+I32 main()
 {
     HC_Lexer l;
     memset(&l, 0, sizeof(HC_Lexer));

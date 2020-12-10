@@ -22,6 +22,4 @@ set(BACKEND_SOURCES
     Tests.h
     Tests.c
 )
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror")
 add_library(${PROJECT_NAME} SHARED ${BACKEND_SOURCES})

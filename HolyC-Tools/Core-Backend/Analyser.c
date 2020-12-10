@@ -56,7 +56,6 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
     switch (info->Count)
     {
         case 0: goto expectedExpression; break;
-        case 1: goto expectedExpression; break;
     }
     
     U64 i;
@@ -78,7 +77,7 @@ static U8 HC_SyntaxAnalyserCreateExpressions(HC_SyntaxAnalyser *analyser, HC_Syn
             }
             case HC_LEXICAL_TOKEN_UNRESOLVED:
             {
-
+                
             }
             default:
             {

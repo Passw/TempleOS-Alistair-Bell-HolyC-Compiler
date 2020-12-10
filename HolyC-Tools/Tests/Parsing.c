@@ -15,7 +15,7 @@ U8 ParseInvalid(U0 *data)
     return r;
 }
 
-U32 main()
+I32 main()
 {
     HC_Lexer l;
     HC_LexerCreateInfo ci;

@@ -6,7 +6,7 @@ static HC_Compiler *Compiler;
 static U8 HC_CompilerValidateFile(const I8 *file)
 {
     U64 fileStrlen = strlen(file);
-    if (fileStrlen <= 1)
+    if (fileStrlen <= 2)
     {
         printf("Argument %s is an invalid file\n", file);
         return HC_False;
