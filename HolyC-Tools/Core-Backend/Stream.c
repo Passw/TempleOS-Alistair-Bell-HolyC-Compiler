@@ -25,14 +25,13 @@ U8 HC_StreamCreate(HC_Stream *stream)
     }
     
     if (stream->Reallocatable)
-        stream->Data = realloc(stream->Data, size * sizeof(I8 *));
+        stream->Data = realloc(stream->Data, size * sizeof(char *));
 
     fseek(file, 0, SEEK_SET);
     fread(stream->Data, 1, size, file);
 
     fclose(file);
 
-    printf("Loading stream %s, length %lu\n", stream->Path, size);
     *stream->StreamSize = size;
     return HC_True;
 }

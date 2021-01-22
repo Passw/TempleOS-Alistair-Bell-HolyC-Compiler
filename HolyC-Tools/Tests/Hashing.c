@@ -2,7 +2,7 @@
 
 static U8 SameHashResult(U0 *data)
 {
-    const I8 *buffer = "HelloWorld";
+    const char *buffer = "HelloWorld";
     U64 hash1 = HC_TokenHashString(buffer);
     U64 hash2 = HC_TokenHashString(buffer);
 
@@ -11,7 +11,7 @@ static U8 SameHashResult(U0 *data)
         printf("Expected hash to be the same from [%lu != %lu]\n", hash1, hash2);
         return HC_False;
     }
-    const I8 *newBuffer = "Hello World";
+    const char *newBuffer = "Hello World";
     U64 hash3 = HC_TokenHashString(newBuffer);
 
     if (hash1 == hash3 || hash2 == hash3)
@@ -35,8 +35,5 @@ I32 main(U0)
     HC_TestRuntineInfo ri;
     
     
-    HC_TestRunTest(tests, sizeof(tests) / sizeof(HC_TestCreateInfo), &ri);
-    
-    
-    return HC_True;
+    return HC_TestRunTest(tests, sizeof(tests) / sizeof(HC_TestCreateInfo), &ri);
 }

@@ -104,7 +104,7 @@ static inline U8 HC_TokenDetermineType(HC_Token *token, HC_Token *previousToken)
 }
 
 /* Needs collision testing */
-U64 HC_TokenHashString(const I8 *source)
+U64 HC_TokenHashString(const char *source)
 {
     U64 hash = 5381;
     I32 c;
@@ -112,7 +112,7 @@ U64 HC_TokenHashString(const I8 *source)
         hash = ((hash << 5) + hash) + c;
     return hash;
 }
-U64 HC_TokenHashChar(const I8 character)
+U64 HC_TokenHashChar(const char character)
 {
     U64 hash = 5381;
     return ((hash << 5) + hash) + (I8)character;

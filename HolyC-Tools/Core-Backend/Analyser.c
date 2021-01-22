@@ -128,19 +128,19 @@ U8 HC_SyntaxAnalyserCreate(HC_SyntaxAnalyser *analyser, HC_SyntaxAnalyserCreateI
     memset(analyser, 0, sizeof(HC_SyntaxAnalyser));
     HC_Lexer *l = createInfo->Lexer;
 
-    analyser->StreamName = l->CurrentFile->FileName;
-    analyser->AnalysingCount = l->CurrentFile->TokenCount;
-    analyser->SymbolTables = calloc(1, sizeof(HC_SyntaxAnalyserSymbolTable));
-    analyser->TableCount   = 1;
+    analyser->StreamName        = l->File->FileName;
+    analyser->AnalysingCount    = l->File->TokenCount;
+    analyser->SymbolTables      = calloc(1, sizeof(HC_SyntaxAnalyserSymbolTable));
+    analyser->TableCount        = 1;
 
     /* Global table */
     memset(&analyser->SymbolTables[0], 0, sizeof(HC_SyntaxAnalyserSymbolTable));
     analyser->SymbolTables[0].Symbols = calloc(0, sizeof(HC_SyntaxAnalyserSymbol));
     
-    U64 tc = l->CurrentFile->TokenCount;
+    U64 tc = l->File->TokenCount;
 
-    analyser->Analysing = calloc(l->CurrentFile->TokenCount, sizeof(HC_Token));
-    memcpy(analyser->Analysing, l->CurrentFile->Tokens, tc * sizeof(HC_Token));
+    analyser->Analysing = calloc(l->File->TokenCount, sizeof(HC_Token));
+    memcpy(analyser->Analysing, l->File->Tokens, tc * sizeof(HC_Token));
     return HC_True;
 }
 U8 HC_SyntaxAnalyserAnalyse(HC_SyntaxAnalyser *analyser)

@@ -1,6 +1,6 @@
 #include <Core-Backend/Common.h>
 
-I32 main(I32 argumentCount, const I8 **arguments)
+I32 main(I32 argumentCount, char **arguments)
 {
     return 1;
 }

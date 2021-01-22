@@ -10,17 +10,12 @@ U8 HC_CompilerCreate(HC_Compiler *compiler, HC_CompilerCreateInfo *info)
 }
 U8 HC_CompilerRun(HC_Compiler *compiler)
 {
-    U64 i;
-    for (i = 0; i < compiler->Lexer.FileCount; i++)
-    {
-        compiler->Lexer.CurrentFile = &compiler->Lexer.Files[i];
-        if (!HC_LexerParse(&compiler->Lexer))
-            return HC_False;
-    }
+    HC_LexerParse(&compiler->Lexer);
+   
     HC_SyntaxAnalyserCreate(&compiler->Analyser, &(HC_SyntaxAnalyserCreateInfo) { .Lexer = &compiler->Lexer });
     if (!HC_SyntaxAnalyserAnalyse(&compiler->Analyser))
     {
-        printf("Failed to analyse %s\n", compiler->Lexer.CurrentFile->FileName);
+        printf("Failed to analyse %s\n", compiler->Lexer.File->FileName);
         return HC_False;
     }
     return HC_True;

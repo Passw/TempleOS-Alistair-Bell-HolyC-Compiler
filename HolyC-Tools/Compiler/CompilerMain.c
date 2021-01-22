@@ -3,7 +3,7 @@
 
 static HC_Compiler *Compiler;
 
-static U8 HC_CompilerValidateFile(const I8 *file)
+static U8 HC_CompilerValidateFile(const char *file)
 {
     U64 fileStrlen = strlen(file);
     if (fileStrlen <= 2)
@@ -11,7 +11,7 @@ static U8 HC_CompilerValidateFile(const I8 *file)
         printf("Argument %s is an invalid file\n", file);
         return HC_False;
     }
-    I8 extension[2];
+    char extension[2];
     memset(extension, 0, sizeof(extension));
     strncpy(extension, file + (fileStrlen - 2), 2);
     
@@ -26,33 +26,31 @@ static U8 HC_CompilerValidateFile(const I8 *file)
 
     return HC_True;
 }
-static const I8 *HC_CompilerParseArguments(const U32 argumentCount, const I8 **arguments)
+static const char *HC_CompilerParseArguments(const U32 argumentCount, char **arguments)
 {
     if (argumentCount <= 1)
     {
         printf("No arguments specified\n");
         return NULL;
     }
-    const I8 *file = arguments[1];
+    const char *file = arguments[1];
     if (!HC_CompilerValidateFile(file))
         return NULL;
 
     return arguments[1];
 }
 
-I32 main(I32 argumentCount, const I8 **arguments)
+I32 main(I32 argumentCount, char **arguments)
 {
     Compiler            = malloc(sizeof(HC_Compiler));
-    
+     
     HC_LexerCreateInfo li;
     memset(&li, 0, sizeof(HC_LexerCreateInfo));
-    li.LoadCount = 1;
-
     const char *loading = HC_CompilerParseArguments(argumentCount, arguments);
     if (loading == NULL)
         return HC_False;
 
-    li.Loads     = &(HC_LexerLoadStreamInfo) { .Input = loading, .LexerFlags = 0 };
+    li.Loading = (HC_LexerLoadStreamInfo) { .Input = loading, .LexerFlags = 0 };
 
     HC_CompilerCreateInfo ci;
     memset(&ci, 0, sizeof(HC_CompilerCreateInfo));

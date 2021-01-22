@@ -10,8 +10,8 @@ typedef U8 (*HC_TestCallback)(U0 *);
 typedef struct HC_TestCreateInfo
 {
     U8              Assertion;
-    const I8        *TestName;
-    const I8        *FailMessage;
+    const char      *TestName;
+    const char      *FailMessage;
     U0              *ProgramData;
     U8              ExpectedResult;
     HC_TestCallback Callback;

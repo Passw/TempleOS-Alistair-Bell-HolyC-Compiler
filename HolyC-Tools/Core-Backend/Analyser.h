@@ -46,7 +46,7 @@ typedef struct HC_SyntaxAnalyserSymbolTable
 
 typedef struct HC_SyntaxAnalyser
 {
-    const I8                       *StreamName;
+    const char                     *StreamName;
     HC_Token                       *Analysing;
     HC_SyntaxAnalyserSymbolTable   *SymbolTables;
     U16                            TableCount;

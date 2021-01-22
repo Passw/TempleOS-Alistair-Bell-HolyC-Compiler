@@ -3,7 +3,7 @@
 #define HC_LEXER_TOKEN_STRING_LENGTH 255
 #define HC_LEXER_TOKEN_ROUND_COUNT 255
 
-inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar, U32 *newLine)
+inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const char currentChar, U32 *newLine)
 {
     *newLine += (currentChar == '\n');
     
@@ -47,12 +47,12 @@ inline U8 HC_LexerCheckTerminationCharacterOrWhitespace(const I8 currentChar, U3
         || currentChar == '\''  /* single quote */
         || currentChar == '\"'; /* double quote */
 }
-inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const I8 currentChar, U32 *newLine)
+inline U8 HC_LexerCheckTerminationCharacterNotWhitespace(const char currentChar, U32 *newLine)
 {
     return HC_LexerCheckTerminationCharacterOrWhitespace(currentChar, newLine) && (currentChar != ' ' && currentChar != '\n');
 }
 
-static inline U8 HC_LexerAddToken(HC_Lexer *l, HC_Token *t, HC_Token *pt, U64 lineCount, const I8 *src, const U64 count)
+static inline U8 HC_LexerAddToken(HC_Lexer *l, HC_Token *t, HC_Token *pt, U64 lineCount, const char *src, const U64 count)
 {
     HC_TokenHandleInfo h;
     memset(&h, 0, sizeof(HC_TokenHandleInfo));
@@ -64,12 +64,12 @@ static inline U8 HC_LexerAddToken(HC_Lexer *l, HC_Token *t, HC_Token *pt, U64 li
     HC_TokenCreate(t, &h);
     return HC_True;
 }
-static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMode, U64 *tokenCount, const U64 lineCount, const I8 *src, const U64 count)
+static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMode, U64 *tokenCount, const U64 lineCount, const char *src, const U64 count)
 {
     HC_Token t;
     HC_Token *lt;
-    if (l->CurrentFile->TokenCount > 1)
-        lt = &l->CurrentFile->Tokens[*tokenCount - 1];
+    if (l->File->TokenCount > 1)
+        lt = &l->File->Tokens[*tokenCount - 1];
     else
         lt = NULL;
 
@@ -105,8 +105,8 @@ static inline U8 HC_LexerHandleNewToken(HC_Lexer *l, U8 *strMode, U8 *commentMod
 
             addToken:
             {
-                l->CurrentFile->Tokens = realloc(l->CurrentFile->Tokens, sizeof(HC_Token) * (*tokenCount + 1));
-                memcpy(&l->CurrentFile->Tokens[*tokenCount], &t, sizeof(HC_Token));
+                l->File->Tokens = realloc(l->File->Tokens, sizeof(HC_Token) * (*tokenCount + 1));
+                memcpy(&l->File->Tokens[*tokenCount], &t, sizeof(HC_Token));
                 *tokenCount += 1;
             }
         }
@@ -121,18 +121,14 @@ U8 HC_LexerCreate(HC_Lexer *lexer, HC_LexerCreateInfo *info)
     assert(info != NULL);
     memset(lexer, 0, sizeof(HC_Lexer));
 
-    lexer->Files = calloc(info->LoadCount, sizeof(HC_CompilingFile));
-
-    U64 i;
-    for (i = 0; i < info->LoadCount; i++)
-        HC_LexerLoadStream(lexer, &info->Loads[i]);
+    HC_LexerLoadStream(lexer, &info->Loading);
     return HC_True;
 }
 U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
 {
     HC_CompilingFile file;
     memset(&file, 0, sizeof(HC_CompilingFile));
-    file.CurrentStream = calloc(0, sizeof(I8 *));
+    file.CurrentStream = calloc(0, sizeof(char *));
 
     HC_Stream stream;
     memset(&stream, 0, sizeof(HC_Stream));
@@ -147,14 +143,14 @@ U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
         printf("Unable to load stream\n");
         return HC_False;
     }
+    
+    lexer->File = malloc(sizeof(HC_Lexer));
 
     file.CurrentStream  = stream.Data;
     file.Tokens         = calloc(0, sizeof(HC_Token));
     file.TokenCount     = 0;
     file.FileName       = info->Input;
-    memcpy(&lexer->Files[lexer->FileCount], &file, sizeof(HC_CompilingFile));
-    
-    lexer->FileCount++;
+    memcpy(lexer->File, &file, sizeof(HC_CompilingFile));
     return HC_True;
 }
 U8 HC_LexerParse(HC_Lexer *lexer)
@@ -164,7 +160,7 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     U64 i = 0; /* counter */
     U64 leftPinscor     = 0; /* start index for the new token string */
     U64 rightPinscor    = 0; /* end index for the new token string */
-    I8 localSource[lexer->CurrentFile->CharCount]; /* local source to prevent stream modifications */
+    char localSource[lexer->File->CharCount]; /* local source to prevent stream modifications */
     U64 tokenCount = 0;
     
     U8 stringMode   = HC_False;
@@ -175,16 +171,16 @@ U8 HC_LexerParse(HC_Lexer *lexer)
     HC_Token tokens[HC_LEXER_TOKEN_ROUND_COUNT]; /* all the tokens found */
     memset(tokens, 0, sizeof(HC_Token) * HC_LEXER_TOKEN_ROUND_COUNT); 
     
-    I8 localBuffer[HC_LEXER_TOKEN_STRING_LENGTH]; /* local buffer for the raw token data */
-    memset(localBuffer, 0, sizeof(I8) * HC_LEXER_TOKEN_STRING_LENGTH);
+    char localBuffer[HC_LEXER_TOKEN_STRING_LENGTH]; /* local buffer for the raw token data */
+    memset(localBuffer, 0, sizeof(char) * HC_LEXER_TOKEN_STRING_LENGTH);
 
-    I8 localBufferCopy[HC_LEXER_TOKEN_STRING_LENGTH];
-    memset(localBufferCopy, 0, sizeof(I8) * HC_LEXER_TOKEN_STRING_LENGTH);
+    char localBufferCopy[HC_LEXER_TOKEN_STRING_LENGTH];
+    memset(localBufferCopy, 0, sizeof(char) * HC_LEXER_TOKEN_STRING_LENGTH);
 
-    strcpy(localSource, lexer->CurrentFile->CurrentStream);
+    strcpy(localSource, lexer->File->CurrentStream);
     while (HC_True)
     {
-        I8 currentChar = localSource[i];
+        char currentChar = localSource[i];
         if (HC_LexerCheckTerminationCharacterOrWhitespace(currentChar, &newLine))
         {
             rightPinscor = i;
@@ -227,33 +223,29 @@ U8 HC_LexerParse(HC_Lexer *lexer)
         HC_LexerStripToken(localBuffer);
         if (strlen(localBuffer) != 0)
         {
-            lexer->CurrentFile->Tokens = realloc(lexer->CurrentFile->Tokens, sizeof(HC_Token) * (tokenCount + 1));
+            lexer->File->Tokens = realloc(lexer->File->Tokens, sizeof(HC_Token) * (tokenCount + 1));
             
             if (tokenCount > 1)
-                HC_LexerAddToken(lexer, &lexer->CurrentFile->Tokens[tokenCount], &lexer->CurrentFile->Tokens[tokenCount - 1], newLine, localBuffer, diff);
+                HC_LexerAddToken(lexer, &lexer->File->Tokens[tokenCount], &lexer->File->Tokens[tokenCount - 1], newLine, localBuffer, diff);
             else
-                HC_LexerAddToken(lexer, &lexer->CurrentFile->Tokens[tokenCount], NULL, newLine, localBuffer, diff);
+                HC_LexerAddToken(lexer, &lexer->File->Tokens[tokenCount], NULL, newLine, localBuffer, diff);
             tokenCount++;
         }
     }
     
-    lexer->CurrentFile->TokenCount = tokenCount;
+    lexer->File->TokenCount = tokenCount;
     return HC_True;
 }
 
 U8 HC_LexerDestroy(HC_Lexer *lexer)
 {
-    U32 i;
-    for (i = 0; i < lexer->FileCount; i++)
-    {
-        free(lexer->Files[i].CurrentStream);
-        free(lexer->Files[i].Tokens);
-    }
-    free(lexer->Files);
+    free(lexer->File->CurrentStream);
+    free(lexer->File->Tokens);
+    free(lexer->File);
 
     return HC_True;
 }
-U8 HC_LexerStripToken(I8 *src)
+U8 HC_LexerStripToken(char *src)
 {
     U32 i;
     U32 begin = 0;

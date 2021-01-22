@@ -17,8 +17,5 @@ I32 main()
 
     HC_TestRuntineInfo runtime;
 
-    HC_TestRunTest(tests, sizeof(tests) / sizeof(HC_TestCreateInfo), &runtime);
-
-
-    return HC_True;
+    return !(HC_TestRunTest(tests, sizeof(tests) / sizeof(HC_TestCreateInfo), &runtime));
 }
