@@ -3,6 +3,10 @@
 
 #include <Core-Backend/SDK.h>
 
+
+/* Amd64 architecture */
+#include "Amd64/Registers.h"
+
 typedef struct HC_Compiler
 {
     HC_Lexer            Lexer;
