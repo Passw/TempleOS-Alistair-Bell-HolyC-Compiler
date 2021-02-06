@@ -1,22 +1,17 @@
 #!/bin/bash
 clear
 
-cmake -B Build -D PROJECT_BUILD_TESTS=On -D CMAKE_BUILD_TYPE=Debug
-if [ $? != 0 ]; then
-    echo "CMake generated errors - refusing to make"
-fi
+# Get the user architecture
+arch=$(uname -m)
 
-./GenerateCompileCommands.sh
+cmake -B Build \
+    -D CMAKE_EXPORT_COMPILE_COMMANDS=1 \
+    -D PROJECT_BUILD_TESTS=On \
+    -D CMAKE_BUILD_TYPE=Debug \
+    -D PROJECT_BUILD_ARCHITECTURE=$arch
 
-cd Build 
-
-# Build everything
-make
-
+cd Build
 # Run unit tests
-make test
-
+make && make test
 cd ../
 
-
-./Build/HolyC-Tools/Compiler/HolyC-Compiler $1

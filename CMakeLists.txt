@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(HolyC)
 
-option(PROJECT_BUILD_TESTS "Build the test programs" OFF)
+option(PROJECT_BUILD_TESTS "Build the test programs" Off)
+option(PROJECT_BUILD_ARCHITECTURE "SDK target architecutre" Off)
 enable_language(ASM-ATT)
+
 
 # common flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -Werror")
@@ -15,11 +17,13 @@ else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g")
 endif()
 
+Message(STATUS "SDK architecutre ${PROJECT_BUILD_ARCHITECTURE}")
 
 add_subdirectory(HolyC-Tools/Compiler) # Compiler
 add_subdirectory(HolyC-Tools/Disassembler) # Dissasembler
 add_subdirectory(HolyC-Tools/Linker) # Linker
 add_subdirectory(HolyC-Tools/Core-Backend) # Interface library for common stuff
+add_subdirectory(HolyC-SDK)
 
 if (PROJECT_BUILD_TESTS)
     enable_testing()
