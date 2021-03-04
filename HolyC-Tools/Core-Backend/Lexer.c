@@ -156,6 +156,11 @@ U8 HC_LexerLoadStream(HC_Lexer *lexer, HC_LexerLoadStreamInfo *info)
 U8 HC_LexerParse(HC_Lexer *lexer)
 {
     assert(lexer != NULL);
+    if (lexer->File->CharCount <= 0)
+    {
+        printf("Error: Lack of data present! [%s]", lexer->File->FileName);
+        return HC_False;
+    }
 
     U64 i = 0; /* counter */
     U64 leftPinscor     = 0; /* start index for the new token string */
