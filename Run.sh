@@ -13,5 +13,6 @@ cmake -B Build \
 cd Build
 # Run unit tests
 make && make test
+mv compile_commands.json ../
 cd ../
 
